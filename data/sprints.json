@@ -6,7 +6,13 @@
     "endDate": "2026-04-03",
     "status": "Active",
     "goals": "Complete core dashboard features and fix critical bugs",
-    "issueIds": ["BUG-001", "FET-001", "BUG-002"]
+    "issueIds": [
+      "BUG-001",
+      "FET-001",
+      "BUG-002",
+      "BUG-005",
+      "BUG-006"
+    ]
   },
   {
     "id": "SPRINT-002",
@@ -15,6 +21,9 @@
     "endDate": "2026-04-21",
     "status": "Planned",
     "goals": "Implement security hardening and optimize API performance",
-    "issueIds": ["SI-001", "BUG-003"]
+    "issueIds": [
+      "SI-001",
+      "BUG-003"
+    ]
   }
 ]

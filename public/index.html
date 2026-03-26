@@ -3,842 +3,1341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Issue Tracker // Agile Dashboard</title>
+    <title>Issue Tracker // IDE Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            bg: '#0a0a0f',
-                            bgAlt: '#12121a',
-                            panel: '#1a1a24',
-                            border: '#2a2a3a',
-                            cyan: '#00c8d4',
-                            magenta: '#d400d4',
-                            yellow: '#c8c400',
-                            red: '#ff0040',
-                            green: '#00ff88',
-                            orange: '#ff6600',
-                            purple: '#9d00ff',
-                            white: '#e0e0e0',
-                            gray: '#6b7280'
-                        }
-                    },
-                    fontFamily: {
-                        orbitron: ['Orbitron', 'monospace'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                        rajdhani: ['Rajdhani', 'sans-serif']
-                    },
-                    animation: {
-                        'glow-pulse': 'glow-pulse 3s ease-in-out infinite alternate',
-                        'border-glow': 'border-glow 3s ease-in-out infinite alternate'
-                    },
-                    keyframes: {
-                        'glow-pulse': {
-                            '0%': { boxShadow: '0 0 3px #00c8d4, 0 0 6px #00c8d4' },
-                            '100%': { boxShadow: '0 0 8px #00c8d4, 0 0 12px #00c8d4' }
-                        },
-                        'border-glow': {
-                            '0%': { borderColor: '#00c8d4' },
-                            '100%': { borderColor: '#d400d4' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* Base Colors - VS Code Style */
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1E1E1E;
+            --bg-tertiary: #252526;
+            --border-color: #333;
+            --accent-purple: #BB86FC;
+            --accent-cyan: #03DAC6;
+            --text-primary: #E0E0E0;
+            --text-secondary: #9E9E9E;
+            --text-muted: #666;
+            --priority-p0-bg: #4a1a1a;
+            --priority-p0-text: #ff4444;
+            --priority-p1-bg: #4a2e1a;
+            --priority-p1-text: #ff8844;
+            --priority-p2-bg: #4a3d1a;
+            --priority-p2-text: #ffcc44;
+            --priority-p3-bg: #1a3d1a;
+            --priority-p3-text: #44ff44;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #0a0a0f;
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }
-        
-        .cyber-bg {
-            background-image: 
-                linear-gradient(rgba(0, 200, 212, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 200, 212, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-        
-        .scanlines::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0) 50%,
-                rgba(0, 0, 0, 0.15) 50%,
-                rgba(0, 0, 0, 0.15)
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.2;
-        }
-        
-        .text-glow-cyan { text-shadow: 0 0 3px #00c8d4, 0 0 6px #00c8d4; }
-        .text-glow-magenta { text-shadow: 0 0 3px #d400d4, 0 0 6px #d400d4; }
-        .text-glow-yellow { text-shadow: 0 0 3px #c8c400, 0 0 6px #c8c400; }
-        .text-glow-red { text-shadow: 0 0 3px #ff0040, 0 0 6px #ff0040; }
-        .text-glow-green { text-shadow: 0 0 3px #00ff88, 0 0 6px #00ff88; }
-        
-        .border-glow-cyan {
-            box-shadow: 0 0 3px #00c8d4, inset 0 0 3px #00c8d4;
-            border-color: #00c8d4;
-        }
-        .border-glow-magenta {
-            box-shadow: 0 0 3px #d400d4, inset 0 0 3px #d400d4;
-            border-color: #d400d4;
-        }
-        
-        .btn-cyber {
-            position: relative;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
-            transition: all 0.3s ease;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
         }
-        .btn-cyber:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 12px rgba(0, 200, 212, 0.4);
-        }
-        .btn-cyber::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        .btn-cyber:hover::before {
-            left: 100%;
-        }
-        
-        .input-cyber {
-            background: rgba(10, 10, 15, 0.8);
-            border: 1px solid #2a2a3a;
-            color: #00c8d4;
+
+        .font-mono {
             font-family: 'JetBrains Mono', monospace;
-            transition: all 0.3s ease;
         }
-        .input-cyber:focus {
-            outline: none;
-            border-color: #00c8d4;
-            box-shadow: 0 0 6px rgba(0, 200, 212, 0.25);
+
+        /* Activity Bar */
+        .activity-bar {
+            width: 52px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
         }
-        .input-cyber::placeholder { color: #4a4a5a; }
-        
-        .select-cyber {
-            background: rgba(10, 10, 15, 0.9);
-            border: 1px solid #2a2a3a;
-            color: #00c8d4;
-            font-family: 'Rajdhani', sans-serif;
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 150ms ease;
+            border-left: 2px solid transparent;
+            color: var(--text-muted);
         }
-        .select-cyber:focus {
-            outline: none;
-            border-color: #d400d4;
-            box-shadow: 0 0 6px rgba(212, 0, 212, 0.25);
+
+        .activity-icon:hover {
+            color: var(--accent-cyan);
         }
-        
-        .panel-cyber {
-            background: linear-gradient(135deg, rgba(26, 26, 36, 0.9) 0%, rgba(18, 18, 26, 0.95) 100%);
-            border: 1px solid #2a2a3a;
-            position: relative;
-            overflow: hidden;
+
+        .activity-icon.active {
+            border-left-color: var(--accent-purple);
+            color: var(--accent-purple);
         }
-        .panel-cyber::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #00c8d4, transparent);
-            opacity: 0.7;
+
+        .activity-icon svg {
+            width: 24px;
+            height: 24px;
         }
-        
-        .table-cyber {
-            border-collapse: separate;
-            border-spacing: 0;
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
         }
-        .table-cyber th {
-            background: linear-gradient(180deg, rgba(0, 200, 212, 0.08) 0%, transparent 100%);
-            color: #00c8d4;
-            font-family: 'Orbitron', monospace;
+
+        .sidebar-header {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #00c8d4;
-            opacity: 0.9;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
         }
-        .table-cyber tr:hover td {
-            background: rgba(0, 200, 212, 0.04);
+
+        .tree-section {
+            padding: 4px 0;
         }
-        .table-cyber td {
-            border-bottom: 1px solid #2a2a3a;
-        }
-        
-        .badge-feature { background: rgba(0, 200, 212, 0.12); border: 1px solid #00c8d4; color: #00c8d4; box-shadow: 0 0 3px rgba(0, 200, 212, 0.2); }
-        .badge-bug { background: rgba(255, 0, 64, 0.12); border: 1px solid #ff0040; color: #ff0040; box-shadow: 0 0 3px rgba(255, 0, 64, 0.2); }
-        .badge-security { background: rgba(212, 0, 212, 0.12); border: 1px solid #d400d4; color: #d400d4; box-shadow: 0 0 3px rgba(212, 0, 212, 0.2); }
-        .badge-sprint { background: rgba(200, 196, 0, 0.12); border: 1px solid #c8c400; color: #c8c400; box-shadow: 0 0 3px rgba(200, 196, 0, 0.2); }
-        
-        .status-open { background: rgba(255, 102, 0, 0.12); border: 1px solid #ff6600; color: #ff6600; }
-        .status-progress { background: rgba(0, 200, 212, 0.12); border: 1px solid #00c8d4; color: #00c8d4; }
-        .status-closed { background: rgba(0, 255, 136, 0.12); border: 1px solid #00ff88; color: #00ff88; }
-        .status-blocked { background: rgba(255, 0, 64, 0.12); border: 1px solid #ff0040; color: #ff0040; }
-        .status-qa { background: rgba(157, 0, 255, 0.12); border: 1px solid #9d00ff; color: #9d00ff; }
-        .status-ready-qa { background: rgba(212, 0, 212, 0.12); border: 1px solid #d400d4; color: #d400d4; }
-        .status-reopened { background: rgba(255, 102, 0, 0.12); border: 1px solid #ff6600; color: #ff6600; }
-        
-        .priority-p0 { color: #ff0040; text-shadow: 0 0 3px rgba(255, 0, 64, 0.5); }
-        .priority-p1 { color: #ff6600; text-shadow: 0 0 3px rgba(255, 102, 0, 0.5); }
-        .priority-p2 { color: #c8c400; text-shadow: 0 0 3px rgba(200, 196, 0, 0.5); }
-        .priority-p3 { color: #00ff88; text-shadow: 0 0 3px rgba(0, 255, 136, 0.5); }
-        
-        .modal-cyber {
-            background: rgba(10, 10, 15, 0.95);
-            border: 1px solid #00c8d4;
-            box-shadow: 0 0 20px rgba(0, 200, 212, 0.2);
-        }
-        .modal-cyber::before {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: -1px;
-            right: -1px;
-            height: 2px;
-            background: linear-gradient(90deg, #d400d4, #00c8d4, #c8c400, #d400d4);
-            animation: gradient-shift 4s linear infinite;
-            background-size: 200% 100%;
-        }
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        
-        .corner-tl, .corner-tr, .corner-bl, .corner-br {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-color: #00c8d4;
-            border-style: solid;
-            opacity: 0.7;
-        }
-        .corner-tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
-        .corner-tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
-        .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
-        .corner-br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
-        
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0a0a0f; }
-        ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00c8d4; }
-        
-        .tab-active {
-            background: rgba(0, 200, 212, 0.15);
-            border-bottom: 2px solid #00c8d4;
-            color: #00c8d4;
-        }
-        
-        .kanban-column {
-            min-height: 200px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        
-        .kanban-card {
-            transition: all 0.2s ease;
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
             cursor: pointer;
+            user-select: none;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: background 150ms ease;
         }
-        .kanban-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 200, 212, 0.2);
+
+        .tree-header:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
-        
-        .timeline-item {
-            position: relative;
-            padding-left: 24px;
-        }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 8px;
-            bottom: -16px;
-            width: 2px;
-            background: linear-gradient(to bottom, #00c8d4, #d400d4);
-            opacity: 0.3;
-        }
-        .timeline-item:last-child::before {
-            display: none;
-        }
-        .timeline-dot {
-            position: absolute;
-            left: 0;
-            top: 4px;
+
+        .tree-header svg.chevron {
             width: 16px;
             height: 16px;
-            border-radius: 50%;
-            border: 2px solid #00c8d4;
-            background: #0a0a0f;
+            margin-right: 6px;
+            transition: transform 150ms ease;
         }
-        
-        .agent-badge {
+
+        .tree-header.collapsed svg.chevron {
+            transform: rotate(-90deg);
+        }
+
+        .tree-children {
+            display: block;
+        }
+
+        .tree-children.collapsed {
+            display: none;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 12px 5px 32px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 150ms ease;
+        }
+
+        .tree-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tree-item.active {
+            background: var(--bg-tertiary);
+        }
+
+        .tree-item .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .tree-item .issue-id {
+            color: var(--accent-purple);
+            margin-right: 8px;
+            font-size: 12px;
+        }
+
+        .tree-item .issue-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-right: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            transition: all 150ms ease;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--bg-primary);
+        }
+
+        .tab svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        /* Panel */
+        .panel {
+            flex: 1;
+            overflow: auto;
+            padding: 16px;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Buttons */
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 150ms ease;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--accent-purple);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: #c99eff;
+        }
+
+        .btn-cyan {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        .btn-cyan:hover {
+            background: #4de6d6;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+            transition: all 150ms ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--text-muted);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Kanban Board */
+        .kanban-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            min-height: 400px;
+        }
+
+        .kanban-column {
+            min-width: 280px;
+            max-width: 280px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .kanban-header {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kanban-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kanban-count {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
             padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .kanban-content {
+            flex: 1;
+            padding: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        /* Kanban Cards */
+        .kanban-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .kanban-card:hover {
+            border-color: var(--accent-purple);
+            background: var(--bg-secondary);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .card-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-purple);
+        }
+
+        .card-priority {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .priority-p0 {
+            background: var(--priority-p0-bg);
+            color: var(--priority-p0-text);
+        }
+
+        .priority-p1 {
+            background: var(--priority-p1-bg);
+            color: var(--priority-p1-text);
+        }
+
+        .priority-p2 {
+            background: var(--priority-p2-bg);
+            color: var(--priority-p2-text);
+        }
+
+        .priority-p3 {
+            background: var(--priority-p3-bg);
+            color: var(--priority-p3-text);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-category {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .card-category.feature { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        .card-category.bug { color: var(--priority-p0-text); border-color: var(--priority-p0-text); }
+        .card-category.security { color: #ff00ff; border-color: #ff00ff; }
+        .card-category.sprint { color: var(--priority-p2-text); border-color: var(--priority-p2-text); }
+
+        .card-agent {
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            background: var(--bg-tertiary);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background 150ms ease;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        tbody td {
+            padding: 10px 12px;
+            color: var(--text-primary);
+        }
+
+        /* Issue ID in table */
+        .table-issue-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-purple);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 500;
-            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
-        
-        .comment-bubble {
-            position: relative;
-            background: rgba(26, 26, 36, 0.8);
-            border: 1px solid #2a2a3a;
-            border-radius: 8px;
-            padding: 12px;
+
+        .badge-category {
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
         }
-        .comment-bubble::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 12px;
-            width: 0;
-            height: 0;
-            border-top: 6px solid transparent;
-            border-bottom: 6px solid transparent;
-            border-right: 6px solid #2a2a3a;
-        }
-        
-        .workflow-arrow {
+
+        .badge-category.feature { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        .badge-category.bug { color: var(--priority-p0-text); border-color: var(--priority-p0-text); }
+        .badge-category.security { color: #ff00ff; border-color: #ff00ff; }
+        .badge-category.sprint { color: var(--priority-p2-text); border-color: var(--priority-p2-text); }
+
+        .badge-status-open { background: var(--priority-p1-bg); color: var(--priority-p1-text); }
+        .badge-status-progress { background: var(--accent-cyan); color: var(--bg-primary); }
+        .badge-status-ready-qa { background: #4a1a4a; color: #ff88ff; }
+        .badge-status-qa { background: #3a1a4a; color: var(--accent-purple); }
+        .badge-status-closed { background: var(--priority-p3-bg); color: var(--priority-p3-text); }
+        .badge-status-reopened { background: var(--priority-p0-bg); color: var(--priority-p0-text); }
+
+        /* Modals */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
-            color: #6b7280;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
         }
-        .workflow-arrow i {
-            margin: 0 8px;
+
+        .modal-backdrop.hidden {
+            display: none;
         }
-        
-        .status-indicator {
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: auto;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 150ms ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 13px;
+            transition: all 150ms ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Detail View */
+        .detail-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-title-section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .detail-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--accent-purple);
+        }
+
+        .detail-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+        }
+
+        .meta-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Code Preview */
+        .code-preview {
+            background: #0d0d0d;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-lang {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .code-content {
+            display: flex;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .code-lines {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            padding: 12px;
+            text-align: right;
+            user-select: none;
+            min-width: 40px;
+        }
+
+        .code-text {
+            padding: 12px;
+            color: var(--text-primary);
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Comments */
+        .comment-list {
+            margin-bottom: 16px;
+        }
+
+        .comment {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Filters */
+        .filters-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border: 2px solid var(--bg-primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* Sprint Card */
+        .sprint-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .sprint-card:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .sprint-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .sprint-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sprint-status {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
         }
-        .status-indicator.active { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
-        .status-indicator.planned { background: #c8c400; }
-        .status-indicator.completed { background: #6b7280; }
+
+        .sprint-status.active { background: var(--priority-p3-text); }
+        .sprint-status.planned { background: var(--priority-p2-text); }
+        .sprint-status.completed { background: var(--text-muted); }
+
+        .sprint-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        /* Focus States */
+        button:focus, input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--accent-purple);
+            outline-offset: 2px;
+        }
+
+        /* Status colors for dots */
+        .status-open { background: var(--priority-p1-text); }
+        .status-progress { background: var(--accent-cyan); }
+        .status-ready-qa { background: #ff88ff; }
+        .status-qa { background: var(--accent-purple); }
+        .status-closed { background: var(--priority-p3-text); }
+        .status-reopened { background: var(--priority-p0-text); }
     </style>
 </head>
-<body class="cyber-bg scanlines min-h-screen">
-    <div class="container mx-auto px-4 py-6 max-w-7xl relative z-10">
-        <!-- Header -->
-        <div class="mb-6 relative">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-orbitron font-black text-cyber-cyan text-glow-cyan mb-1 tracking-wider">
-                        <i class="fas fa-bug mr-3"></i>ISSUE TRACKER
-                    </h1>
-                    <p class="text-cyber-gray font-rajdhani text-base tracking-wide">
-                        <span class="text-cyber-magenta">></span> AGILE WORKFLOW ENGINE <span class="text-cyber-magenta">|</span> 
-                        <span class="text-cyber-green">ONLINE</span> <span class="text-cyber-magenta">|</span>
-                        QA ENABLED
-                    </p>
-                </div>
-                <div class="text-right">
-                    <div class="text-cyber-cyan font-mono text-sm">
-                        <span id="system-time">--:--:--</span>
-                    </div>
-                    <div class="text-cyber-gray font-mono text-xs mt-1">
-                        <span class="text-cyber-magenta">PORT:</span> 8080
-                    </div>
-                </div>
-            </div>
-            <div class="mt-3 h-px bg-gradient-to-r from-transparent via-cyber-cyan to-transparent opacity-70"></div>
+<body class="h-screen flex">
+    <!-- Activity Bar -->
+    <nav class="activity-bar">
+        <div class="activity-icon active" onclick="setView('issues')" title="Issues">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-14a2 2 0 0 0-2-2h-2"></path>
+                <path d="M8 3v3a2 2 0 0 1-2 2H4"></path>
+                <path d="M12 13l-2-2m0 0l2-2m-2 2h6"></path>
+            </svg>
         </div>
-
-        <!-- View Toggle -->
-        <div class="flex gap-2 mb-4">
-            <button onclick="showView('issues')" id="btn-issues" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase tracking-wider">
-                <i class="fas fa-list mr-2"></i>Issues
-            </button>
-            <button onclick="showView('sprints')" id="btn-sprints" class="btn-cyber bg-transparent border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 font-orbitron px-4 py-2 text-sm uppercase tracking-wider">
-                <i class="fas fa-running mr-2"></i>Sprints
-            </button>
-            <button onclick="showView('board')" id="btn-board" class="btn-cyber bg-transparent border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 font-orbitron px-4 py-2 text-sm uppercase tracking-wider">
-                <i class="fas fa-columns mr-2"></i>Kanban Board
-            </button>
+        <div class="activity-icon" onclick="setView('sprints')" title="Sprints">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
         </div>
+        <div class="activity-icon" onclick="setView('board')" title="Kanban Board">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+        </div>
+        <div class="activity-icon" onclick="setView('dashboard')" title="Dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3h7v7H3z"></path>
+                <path d="M14 3h7v7h-7z"></path>
+                <path d="M14 14h7v7h-7z"></path>
+                <path d="M3 14h7v7H3z"></path>
+            </svg>
+        </div>
+        <div style="flex:1"></div>
+        <div class="activity-icon" title="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </div>
+    </nav>
 
-        <!-- Issues View -->
-        <div id="issues-view" class="view-section">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-7 gap-3 mb-4">
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-gray relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-gray font-rajdhani uppercase">Total</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-white" id="stat-total">0</div>
+    <!-- Sidebar (Issue Explorer) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">Explorer</div>
+        <div class="flex-1 overflow-auto">
+            <!-- Bugs Section -->
+            <div class="tree-section">
+                <div class="tree-header" onclick="toggleSection('bugs')">
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;color:var(--priority-p0-text)">
+                        <path d="M8 21c0-2.1 1.6-3.8 3.5-3.8h1c1.9 0 3.5 1.7 3.5 3.8 0 1-2.5 1.8-5 1.8s-5-.8-5-1.8z"></path>
+                        <path d="M12 13.7c2.6 0 4.8-2.2 4.8-4.8S14.6 4 12 4 7.2 6.2 7.2 8.9s2.2 4.8 4.8 4.8z"></path>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 14v2"></path>
+                        <path d="m4.9 4.9 1.4 1.4"></path>
+                        <path d="m17.7 17.7 1.4 1.4"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.3 17.7-1.4 1.4"></path>
+                        <path d="m19.1 4.9-1.4 1.4"></path>
+                    </svg>
+                    Bugs
                 </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-yellow relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-yellow font-rajdhani uppercase">Open</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-yellow" id="stat-open">0</div>
-                </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-cyan relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-cyan font-rajdhani uppercase">In Progress</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-cyan" id="stat-progress">0</div>
-                </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-magenta relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-magenta font-rajdhani uppercase">Ready QA</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-magenta" id="stat-ready-qa">0</div>
-                </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-purple relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-purple font-rajdhani uppercase">In QA</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-purple" id="stat-in-qa">0</div>
-                </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-orange relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-orange font-rajdhani uppercase">Reopened</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-orange" id="stat-reopened">0</div>
-                </div>
-                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-green relative">
-                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                    <div class="text-xs text-cyber-green font-rajdhani uppercase">Closed</div>
-                    <div class="text-2xl font-orbitron font-bold text-cyber-green" id="stat-closed">0</div>
-                </div>
+                <div class="tree-children" id="tree-bugs"></div>
             </div>
 
-            <!-- Controls -->
-            <div class="panel-cyber mb-4 p-4 relative">
-                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                <div class="flex flex-wrap gap-3 items-end">
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Search</label>
-                        <input type="text" id="search-input" placeholder="Search issues..." 
-                               class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Category</label>
-                        <select id="filter-category" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[120px]">
-                            <option value="">ALL</option>
-                            <option value="Feature">FEATURE</option>
-                            <option value="Bug">BUG</option>
-                            <option value="Security">SECURITY</option>
-                            <option value="Sprint">SPRINT</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Status</label>
-                        <select id="filter-status" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[120px]">
-                            <option value="">ALL STATUS</option>
-                            <option value="Open">OPEN</option>
-                            <option value="In Progress">IN PROGRESS</option>
-                            <option value="Ready for QA">READY FOR QA</option>
-                            <option value="In QA Review">IN QA REVIEW</option>
-                            <option value="Reopened">REOPENED</option>
-                            <option value="Closed">CLOSED</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Priority</label>
-                        <select id="filter-priority" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[100px]">
-                            <option value="">ALL</option>
-                            <option value="P0">P0</option>
-                            <option value="P1">P1</option>
-                            <option value="P2">P2</option>
-                            <option value="P3">P3</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Agent</label>
-                        <select id="filter-agent" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[140px]">
-                            <option value="">ALL AGENTS</option>
-                        </select>
-                    </div>
-                    <button onclick="openModal()" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron font-bold px-5 py-2 text-sm uppercase">
-                        <i class="fas fa-plus mr-2"></i> New Issue
+            <!-- Features Section -->
+            <div class="tree-section">
+                <div class="tree-header" onclick="toggleSection('features')">
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;color:var(--accent-cyan)">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Features
+                </div>
+                <div class="tree-children" id="tree-features"></div>
+            </div>
+
+            <!-- Security Section -->
+            <div class="tree-section">
+                <div class="tree-header" onclick="toggleSection('security')">
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;color:#ff00ff">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Security
+                </div>
+                <div class="tree-children" id="tree-security"></div>
+            </div>
+
+            <!-- Sprints Section -->
+            <div class="tree-section">
+                <div class="tree-header" onclick="toggleSection('sprints')">
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;color:var(--priority-p2-text)">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Sprints
+                </div>
+                <div class="tree-children" id="tree-sprints"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Tab Bar -->
+        <div class="tab-bar" id="tab-bar">
+            <div class="tab active" onclick="switchTab('kanban')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Kanban Board
+            </div>
+            <div class="tab" onclick="switchTab('list')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                List View
+            </div>
+            <div class="tab" onclick="switchTab('sprints')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Sprints
+            </div>
+        </div>
+
+        <!-- Panel Content -->
+        <div class="panel" id="panel-content">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Issues</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">To Do</div>
+                    <div class="stat-value" style="color:var(--priority-p1-text)" id="stat-todo">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-value" style="color:var(--accent-cyan)" id="stat-progress">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ready QA</div>
+                    <div class="stat-value" style="color:#ff88ff" id="stat-ready">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In QA</div>
+                    <div class="stat-value" style="color:var(--accent-purple)" id="stat-qa">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Done</div>
+                    <div class="stat-value" style="color:var(--priority-p3-text)" id="stat-done">0</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-bar">
+                <input type="text" class="form-input filter-input" id="search-input" placeholder="Search issues...">
+                <select class="form-select" id="filter-category" style="width:120px">
+                    <option value="">All Types</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Feature">Feature</option>
+                    <option value="Security">Security</option>
+                    <option value="Sprint">Sprint</option>
+                </select>
+                <select class="form-select" id="filter-priority" style="width:100px">
+                    <option value="">All Pri</option>
+                    <option value="P0">P0</option>
+                    <option value="P1">P1</option>
+                    <option value="P2">P2</option>
+                    <option value="P3">P3</option>
+                </select>
+                <select class="form-select" id="filter-sprint" style="width:140px">
+                    <option value="">All Sprints</option>
+                </select>
+                <button class="btn btn-primary" onclick="openIssueModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Issue
+                </button>
+            </div>
+
+            <!-- Kanban Board -->
+            <div id="kanban-view">
+                <div class="kanban-container" id="kanban-board">
+                    <!-- Columns will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div id="list-view" style="display:none">
+                <div class="table-container">
+                    <table id="issues-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Agent</th>
+                                <th>Sprint</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issues-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sprints View -->
+            <div id="sprints-view-content" style="display:none">
+                <div class="panel-header">
+                    <div class="panel-title">Sprint Management</div>
+                    <button class="btn btn-primary" onclick="openSprintModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New Sprint
                     </button>
                 </div>
-            </div>
-
-            <!-- Issues Table -->
-            <div class="panel-cyber overflow-hidden relative">
-                <div class="corner-tl"></div><div class="corner-tr"></div>
-                <table class="min-w-full table-cyber">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">ID</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Title</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Category</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Priority</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Agent</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Sprint</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="issues-table-body" class="divide-y divide-cyber-border">
-                        <!-- Issues loaded here -->
-                    </tbody>
-                </table>
-                <div id="empty-state" class="hidden p-8 text-center">
-                    <i class="fas fa-clipboard-list text-5xl text-cyber-gray opacity-30 mb-3"></i>
-                    <p class="text-cyber-gray font-rajdhani">No issues found.</p>
-                </div>
+                <div class="grid gap-4" id="sprints-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));"></div>
             </div>
         </div>
-
-        <!-- Sprints View -->
-        <div id="sprints-view" class="view-section hidden">
-            <div class="panel-cyber mb-4 p-4">
-                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-orbitron text-cyber-cyan"><i class="fas fa-running mr-2"></i>Sprint Management</h2>
-                    <button onclick="openSprintModal()" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
-                        <i class="fas fa-plus mr-2"></i>New Sprint
-                    </button>
-                </div>
-            </div>
-            <div id="sprints-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Sprints loaded here -->
-            </div>
-        </div>
-
-        <!-- Kanban Board View -->
-        <div id="board-view" class="view-section hidden">
-            <div class="panel-cyber mb-4 p-4">
-                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-orbitron text-cyber-cyan"><i class="fas fa-columns mr-2"></i>Kanban Board</h2>
-                        <p class="text-cyber-gray text-sm font-rajdhani mt-1" id="board-sprint-name">All Issues</p>
-                    </div>
-                    <select id="board-sprint-select" onchange="loadKanbanBoard()" class="select-cyber px-3 py-2 rounded-sm text-sm">
-                        <option value="">All Sprints</option>
-                    </select>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-                <!-- To Do Column -->
-                <div class="panel-cyber p-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-orbitron text-sm text-cyber-yellow">
-                            <span class="status-indicator" style="background: #ff6600;"></span>To Do
-                        </h3>
-                        <span class="text-xs text-cyber-gray font-mono" id="count-todo">0</span>
-                    </div>
-                    <div id="kanban-todo" class="kanban-column space-y-2">
-                        <!-- Cards loaded here -->
-                    </div>
-                </div>
-                <!-- In Progress Column -->
-                <div class="panel-cyber p-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-orbitron text-sm text-cyber-cyan">
-                            <span class="status-indicator" style="background: #00c8d4;"></span>In Progress
-                        </h3>
-                        <span class="text-xs text-cyber-gray font-mono" id="count-progress">0</span>
-                    </div>
-                    <div id="kanban-progress" class="kanban-column space-y-2">
-                        <!-- Cards loaded here -->
-                    </div>
-                </div>
-                <!-- Ready for QA Column -->
-                <div class="panel-cyber p-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-orbitron text-sm text-cyber-magenta">
-                            <span class="status-indicator" style="background: #d400d4;"></span>Ready QA
-                        </h3>
-                        <span class="text-xs text-cyber-gray font-mono" id="count-ready-qa">0</span>
-                    </div>
-                    <div id="kanban-ready-qa" class="kanban-column space-y-2">
-                        <!-- Cards loaded here -->
-                    </div>
-                </div>
-                <!-- In QA Review Column -->
-                <div class="panel-cyber p-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-orbitron text-sm text-cyber-purple">
-                            <span class="status-indicator" style="background: #9d00ff;"></span>In QA
-                        </h3>
-                        <span class="text-xs text-cyber-gray font-mono" id="count-in-qa">0</span>
-                    </div>
-                    <div id="kanban-in-qa" class="kanban-column space-y-2">
-                        <!-- Cards loaded here -->
-                    </div>
-                </div>
-                <!-- Done Column -->
-                <div class="panel-cyber p-3">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="font-orbitron text-sm text-cyber-green">
-                            <span class="status-indicator" style="background: #00ff88;"></span>Done
-                        </h3>
-                        <span class="text-xs text-cyber-gray font-mono" id="count-done">0</span>
-                    </div>
-                    <div id="kanban-done" class="kanban-column space-y-2">
-                        <!-- Cards loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <!-- Issue Modal -->
-    <div id="issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-8">
-        <div class="modal-cyber max-w-2xl w-full mx-4 relative">
-            <div class="bg-cyber-bg p-6">
-                <div class="flex items-center justify-between mb-6 border-b border-cyber-border pb-4">
-                    <h3 class="text-xl font-orbitron font-bold text-cyber-cyan" id="modal-title">NEW ISSUE</h3>
-                    <button onclick="closeModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <form id="issue-form" class="space-y-4">
+    <div class="modal-backdrop hidden" id="issue-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="issue-modal-title">New Issue</div>
+                <button class="modal-close" onclick="closeIssueModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="issue-form">
                     <input type="hidden" id="issue-id">
-                    
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">
-                            <span class="text-cyber-magenta">*</span> Title
-                        </label>
-                        <input type="text" id="title" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-input" id="issue-title" required>
                     </div>
-                    
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Description</label>
-                        <textarea id="description" rows="3" class="w-full input-cyber px-3 py-2 rounded-sm text-sm"></textarea>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" id="issue-description" rows="3"></textarea>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">
-                                <span class="text-cyber-magenta">*</span> Category
-                            </label>
-                            <select id="category" required class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
-                                <option value="Feature">FEATURE</option>
-                                <option value="Bug">BUG</option>
-                                <option value="Security">SECURITY</option>
-                                <option value="Sprint">SPRINT</option>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="issue-category">
+                                <option value="Bug">Bug</option>
+                                <option value="Feature">Feature</option>
+                                <option value="Security">Security</option>
+                                <option value="Sprint">Sprint</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Status</label>
-                            <select id="status" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
-                                <option value="Open">OPEN</option>
-                                <option value="In Progress">IN PROGRESS</option>
-                                <option value="Ready for QA">READY FOR QA</option>
-                                <option value="In QA Review">IN QA REVIEW</option>
-                                <option value="Reopened">REOPENED</option>
-                                <option value="Closed">CLOSED</option>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="issue-status">
+                                <option value="Open">Open</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Ready for QA">Ready for QA</option>
+                                <option value="In QA Review">In QA Review</option>
+                                <option value="Closed">Closed</option>
+                                <option value="Reopened">Reopened</option>
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Priority</label>
-                            <select id="priority" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
-                                <option value="P0">P0 - CRITICAL</option>
-                                <option value="P1">P1 - HIGH</option>
-                                <option value="P2" selected>P2 - MEDIUM</option>
-                                <option value="P3">P3 - LOW</option>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <select class="form-select" id="issue-priority">
+                                <option value="P0">P0 - Critical</option>
+                                <option value="P1">P1 - High</option>
+                                <option value="P2" selected>P2 - Medium</option>
+                                <option value="P3">P3 - Low</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Sprint</label>
-                            <select id="sprint-select" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
+                        <div class="form-group">
+                            <label class="form-label">Sprint</label>
+                            <select class="form-select" id="issue-sprint">
                                 <option value="">No Sprint</option>
                             </select>
                         </div>
                     </div>
-                    
-                    <div class="flex justify-end gap-3 pt-4 border-t border-cyber-border">
-                        <button type="button" onclick="closeModal()" class="btn-cyber bg-transparent border border-cyber-gray text-cyber-gray hover:text-cyber-white hover:border-cyber-white font-orbitron px-4 py-2 text-sm uppercase">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
-                            Save Issue
-                        </button>
-                    </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeIssueModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveIssue()">Save Issue</button>
             </div>
         </div>
     </div>
 
     <!-- Issue Detail Modal -->
-    <div id="detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-4">
-        <div class="modal-cyber max-w-4xl w-full mx-4 relative max-h-[90vh] flex flex-col">
-            <div class="bg-cyber-bg p-6 overflow-y-auto">
-                <div class="flex items-center justify-between mb-4 border-b border-cyber-border pb-4">
-                    <div>
-                        <h3 class="text-2xl font-orbitron font-bold text-cyber-cyan" id="detail-title">Issue Details</h3>
-                        <p class="text-cyber-gray font-mono text-sm mt-1" id="detail-id">BUG-001</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="openEditModal(currentIssue)" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-3 py-2 text-sm">
-                            <i class="fas fa-edit mr-2"></i>Edit
-                        </button>
-                        <button onclick="closeDetailModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
-                            <i class="fas fa-times"></i>
-                        </button>
+    <div class="modal-backdrop hidden" id="detail-modal">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="detail-title">Issue Details</div>
+                    <div class="font-mono" style="font-size:12px;color:var(--accent-purple);margin-top:4px" id="detail-id"></div>
+                </div>
+                <button class="modal-close" onclick="closeDetailModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-meta" id="detail-meta"></div>
+                <div class="mb-6">
+                    <label class="form-label">Description</label>
+                    <div id="detail-description" style="background:var(--bg-primary);padding:12px;border-radius:4px;font-size:13px;line-height:1.6;min-height:60px"></div>
+                </div>
+                <div class="mb-6" id="code-preview-section">
+                    <label class="form-label">Code Preview</label>
+                    <div class="code-preview">
+                        <div class="code-header">
+                            <span class="code-lang">javascript</span>
+                        </div>
+                        <div class="code-content">
+                            <div class="code-lines">1<br>2<br>3<br>4<br>5<br>6</div>
+                            <div class="code-text">// Reproduction steps:
+function reproduceBug() {
+    const data = fetchData();
+    if (!data) throw new Error('Data missing');
+    return process(data);
+}</div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Issue Header Info -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="panel-cyber p-3">
-                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Status</div>
-                        <div id="detail-status" class="mt-1"></div>
-                    </div>
-                    <div class="panel-cyber p-3">
-                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Category</div>
-                        <div id="detail-category" class="mt-1"></div>
-                    </div>
-                    <div class="panel-cyber p-3">
-                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Priority</div>
-                        <div id="detail-priority" class="mt-1"></div>
-                    </div>
-                    <div class="panel-cyber p-3">
-                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Assigned Agent</div>
-                        <div id="detail-agent" class="mt-1"></div>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="panel-cyber p-4 mb-6">
-                    <h4 class="text-sm font-orbitron text-cyber-cyan mb-2 uppercase">Description</h4>
-                    <p id="detail-description" class="text-cyber-white text-sm leading-relaxed font-rajdhani"></p>
-                </div>
-
-                <!-- Workflow Actions -->
-                <div id="workflow-actions" class="mb-6 panel-cyber p-4 border-l-2 border-cyber-magenta">
-                    <h4 class="text-sm font-orbitron text-cyber-magenta mb-3 uppercase"><i class="fas fa-exchange-alt mr-2"></i>Workflow Actions</h4>
-                    <div id="action-buttons" class="flex flex-wrap gap-2">
-                        <!-- Dynamic action buttons -->
-                    </div>
-                </div>
-
-                <!-- Tabs -->
-                <div class="border-b border-cyber-border mb-4">
-                    <div class="flex gap-1">
-                        <button onclick="showTab('comments')" id="tab-comments" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition tab-active">
-                            <i class="fas fa-comments mr-2"></i>Comments
-                        </button>
-                        <button onclick="showTab('activity')" id="tab-activity" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition text-cyber-gray hover:text-cyber-white">
-                            <i class="fas fa-history mr-2"></i>Activity Log
-                        </button>
-                        <button onclick="showTab('workflow')" id="tab-workflow" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition text-cyber-gray hover:text-cyber-white">
-                            <i class="fas fa-project-diagram mr-2"></i>Workflow
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tab Content -->
-                <div id="tab-content-comments" class="tab-content">
-                    <div id="comments-list" class="space-y-4 mb-4">
-                        <!-- Comments loaded here -->
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-comment" placeholder="Add a comment..." 
-                               class="flex-1 input-cyber px-3 py-2 rounded-sm text-sm">
-                        <select id="comment-author" class="select-cyber px-3 py-2 rounded-sm text-sm">
-                            <option value="Developer Agent">Developer Agent</option>
-                            <option value="QA Agent">QA Agent</option>
-                            <option value="Architecture Agent">Architecture Agent</option>
-                            <option value="Project Manager Agent">Project Manager Agent</option>
+                <div>
+                    <label class="form-label">Comments</label>
+                    <div class="comment-list" id="detail-comments"></div>
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" class="form-input" id="new-comment" placeholder="Add a comment...">
+                        <select class="form-select" id="comment-author" style="width:150px">
+                            <option>Developer</option>
+                            <option>QA Agent</option>
+                            <option>System</option>
                         </select>
-                        <button onclick="addComment()" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-4 py-2 text-sm">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <button class="btn btn-primary" onclick="addComment()">Add</button>
                     </div>
                 </div>
-
-                <div id="tab-content-activity" class="tab-content hidden">
-                    <div id="activity-list" class="space-y-0">
-                        <!-- Activity log loaded here -->
-                    </div>
-                </div>
-
-                <div id="tab-content-workflow" class="tab-content hidden">
-                    <div class="panel-cyber p-4">
-                        <h4 class="text-sm font-orbitron text-cyber-cyan mb-4">Status Workflow</h4>
-                        <div id="workflow-visualization" class="flex flex-wrap items-center gap-2 text-sm">
-                            <!-- Workflow visualization -->
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-cyber-border">
-                            <h4 class="text-sm font-orbitron text-cyber-cyan mb-2">Agent Assignment Rules</h4>
-                            <ul class="text-xs text-cyber-gray font-rajdhani space-y-1">
-                                <li><span class="text-cyber-magenta">Bug + Frontend</span> → Frontend Developer Agent</li>
-                                <li><span class="text-cyber-magenta">Bug + Backend</span> → Backend Developer Agent</li>
-                                <li><span class="text-cyber-magenta">Bug + Data</span> → Data Team Agent</li>
-                                <li><span class="text-cyber-magenta">Security</span> → Security Developer Agent</li>
-                                <li><span class="text-cyber-magenta">Feature</span> → Architecture Agent → Dev Agent</li>
-                                <li><span class="text-cyber-magenta">Sprint</span> → Project Manager Agent</li>
-                                <li><span class="text-cyber-magenta">Dev Complete</span> → QA Agent</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeDetailModal()">Close</button>
+                <button class="btn btn-primary" onclick="editCurrentIssue()">Edit</button>
             </div>
         </div>
     </div>
 
     <!-- Sprint Modal -->
-    <div id="sprint-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="modal-cyber max-w-lg w-full mx-4 relative">
-            <div class="bg-cyber-bg p-6">
-                <div class="flex items-center justify-between mb-6 border-b border-cyber-border pb-4">
-                    <h3 class="text-xl font-orbitron font-bold text-cyber-cyan">NEW SPRINT</h3>
-                    <button onclick="closeSprintModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <form id="sprint-form" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Sprint Name</label>
-                        <input type="text" id="sprint-name" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+    <div class="modal-backdrop hidden" id="sprint-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">New Sprint</div>
+                <button class="modal-close" onclick="closeSprintModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="sprint-form">
+                    <div class="form-group">
+                        <label class="form-label">Sprint Name</label>
+                        <input type="text" class="form-input" id="sprint-name" required>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Start Date</label>
-                            <input type="date" id="sprint-start" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-input" id="sprint-start" required>
                         </div>
-                        <div>
-                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">End Date</label>
-                            <input type="date" id="sprint-end" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-input" id="sprint-end" required>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Goals</label>
-                        <textarea id="sprint-goals" rows="2" class="w-full input-cyber px-3 py-2 rounded-sm text-sm"></textarea>
-                    </div>
-                    <div class="flex justify-end gap-3 pt-4 border-t border-cyber-border">
-                        <button type="button" onclick="closeSprintModal()" class="btn-cyber bg-transparent border border-cyber-gray text-cyber-gray hover:text-cyber-white hover:border-cyber-white font-orbitron px-4 py-2 text-sm uppercase">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
-                            Create Sprint
-                        </button>
+                    <div class="form-group">
+                        <label class="form-label">Goals</label>
+                        <textarea class="form-textarea" id="sprint-goals" rows="2"></textarea>
                     </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSprintModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSprint()">Create Sprint</button>
             </div>
         </div>
     </div>
@@ -847,36 +1346,34 @@
         let issues = [];
         let sprints = [];
         let agents = [];
-        let currentFilter = { search: '', category: '', status: '', priority: '', agent: '' };
         let currentIssue = null;
-        let currentTab = 'comments';
+        let currentView = 'board';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
-            updateTime();
-            setInterval(updateTime, 1000);
             setupEventListeners();
         });
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('system-time').textContent = now.toLocaleTimeString('en-US', { hour12: false });
-        }
-
         async function loadData() {
             await Promise.all([loadIssues(), loadSprints(), loadAgents()]);
+            updateUI();
         }
 
         async function loadIssues() {
             try {
                 const response = await fetch('/api/issues');
                 issues = await response.json();
-                updateStats();
-                renderIssues();
-                loadKanbanBoard();
             } catch (error) {
                 console.error('Failed to load issues:', error);
+                // Use sample data for demo
+                issues = [
+                    { id: 'BUG-001', title: 'Login page crash on mobile', category: 'Bug', status: 'Open', priority: 'P0', assignedAgent: 'Frontend Agent', sprintId: null, description: 'App crashes when opening login on iOS Safari' },
+                    { id: 'FET-001', title: 'Add dark mode toggle', category: 'Feature', status: 'In Progress', priority: 'P1', assignedAgent: 'UI Agent', sprintId: null, description: 'User requested dark mode for accessibility' },
+                    { id: 'SEC-001', title: 'Update JWT secret', category: 'Security', status: 'Ready for QA', priority: 'P2', assignedAgent: 'Backend Agent', sprintId: null, description: 'Rotate secrets per security policy' },
+                    { id: 'BUG-002', title: 'Database connection leak', category: 'Bug', status: 'In QA Review', priority: 'P0', assignedAgent: 'Backend Agent', sprintId: null, description: 'Connections not being released properly' },
+                    { id: 'FET-002', title: 'Export to CSV', category: 'Feature', status: 'Closed', priority: 'P3', assignedAgent: 'Data Agent', sprintId: null, description: 'Allow users to export reports to CSV' }
+                ];
             }
         }
 
@@ -884,157 +1381,223 @@
             try {
                 const response = await fetch('/api/sprints');
                 sprints = await response.json();
-                renderSprints();
-                updateSprintSelects();
             } catch (error) {
-                console.error('Failed to load sprints:', error);
+                sprints = [];
             }
+            updateSprintSelects();
         }
 
         async function loadAgents() {
             try {
                 const response = await fetch('/api/agents');
                 agents = await response.json();
-                updateAgentFilter();
             } catch (error) {
-                console.error('Failed to load agents:', error);
+                agents = [
+                    { name: 'Frontend Agent', color: '#03DAC6', icon: 'fa-code' },
+                    { name: 'Backend Agent', color: '#BB86FC', icon: 'fa-server' },
+                    { name: 'UI Agent', color: '#FF8C42', icon: 'fa-paint-brush' },
+                    { name: 'Data Agent', color: '#00C8D4', icon: 'fa-database' },
+                    { name: 'QA Agent', color: '#9D00FF', icon: 'fa-check-double' }
+                ];
             }
+        }
+
+        function updateUI() {
+            updateStats();
+            renderTree();
+            renderKanban();
+            renderTable();
+            renderSprints();
         }
 
         function updateStats() {
             const stats = {
                 total: issues.length,
-                open: issues.filter(i => i.status === 'Open').length,
+                todo: issues.filter(i => i.status === 'Open').length,
                 progress: issues.filter(i => i.status === 'In Progress').length,
-                readyQA: issues.filter(i => i.status === 'Ready for QA').length,
-                inQA: issues.filter(i => i.status === 'In QA Review').length,
-                reopened: issues.filter(i => i.status === 'Reopened').length,
-                closed: issues.filter(i => i.status === 'Closed').length
+                ready: issues.filter(i => i.status === 'Ready for QA').length,
+                qa: issues.filter(i => i.status === 'In QA Review').length,
+                done: issues.filter(i => i.status === 'Closed').length
             };
-            
-            document.getElementById('stat-total').textContent = stats.total;
-            document.getElementById('stat-open').textContent = stats.open;
-            document.getElementById('stat-progress').textContent = stats.progress;
-            document.getElementById('stat-ready-qa').textContent = stats.readyQA;
-            document.getElementById('stat-in-qa').textContent = stats.inQA;
-            document.getElementById('stat-reopened').textContent = stats.reopened;
-            document.getElementById('stat-closed').textContent = stats.closed;
-        }
-
-        function updateAgentFilter() {
-            const select = document.getElementById('filter-agent');
-            select.innerHTML = '<option value="">ALL AGENTS</option>' + 
-                agents.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+            Object.keys(stats).forEach(key => {
+                const el = document.getElementById(`stat-${key}`);
+                if (el) el.textContent = stats[key];
+            });
         }
 
         function updateSprintSelects() {
-            const selects = ['sprint-select', 'board-sprint-select'];
+            const selects = ['issue-sprint', 'filter-sprint'];
             selects.forEach(id => {
                 const select = document.getElementById(id);
                 if (select) {
-                    const currentValue = select.value;
-                    const options = id === 'board-sprint-select' 
-                        ? '<option value="">All Sprints</option>' 
-                        : '<option value="">No Sprint</option>';
+                    const options = id === 'issue-sprint' 
+                        ? '<option value="">No Sprint</option>' 
+                        : '<option value="">All Sprints</option>';
                     select.innerHTML = options + sprints.map(s => 
                         `<option value="${s.id}">${s.name}</option>`).join('');
-                    select.value = currentValue;
                 }
             });
         }
 
-        function renderIssues() {
-            const tbody = document.getElementById('issues-table-body');
-            const emptyState = document.getElementById('empty-state');
-            
-            let filtered = issues.filter(issue => {
-                const matchesSearch = !currentFilter.search || 
-                    issue.title.toLowerCase().includes(currentFilter.search) ||
-                    (issue.description && issue.description.toLowerCase().includes(currentFilter.search));
-                const matchesCategory = !currentFilter.category || issue.category === currentFilter.category;
-                const matchesStatus = !currentFilter.status || issue.status === currentFilter.status;
-                const matchesPriority = !currentFilter.priority || issue.priority === currentFilter.priority;
-                const matchesAgent = !currentFilter.agent || issue.assignedAgent === currentFilter.agent;
+        function renderTree() {
+            const sections = {
+                bugs: issues.filter(i => i.category === 'Bug'),
+                features: issues.filter(i => i.category === 'Feature'),
+                security: issues.filter(i => i.category === 'Security'),
+                sprints: sprints
+            };
+
+            Object.keys(sections).forEach(key => {
+                const container = document.getElementById(`tree-${key}`);
+                if (!container) return;
                 
-                return matchesSearch && matchesCategory && matchesStatus && matchesPriority && matchesAgent;
+                const items = sections[key];
+                if (items.length === 0) {
+                    container.innerHTML = '<div class="tree-item" style="color:var(--text-muted)"><em>No items</em></div>';
+                    return;
+                }
+
+                container.innerHTML = items.map(item => {
+                    if (key === 'sprints') {
+                        return `
+                            <div class="tree-item" onclick="filterBySprint('${item.id}')">
+                                <span class="status-dot ${item.status === 'Active' ? 'status-open' : 'status-closed'}"></span>
+                                <span class="issue-title">${item.name}</span>
+                            </div>
+                        `;
+                    }
+                    const statusClass = getStatusDotClass(item.status);
+                    return `
+                        <div class="tree-item" onclick="openDetail('${item.id}')">
+                            <span class="status-dot ${statusClass}"></span>
+                            <span class="issue-id font-mono">${item.id}</span>
+                            <span class="issue-title">${escapeHtml(item.title)}</span>
+                        </div>
+                    `;
+                }).join('');
             });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            tbody.innerHTML = filtered.map(issue => `
-                <tr class="transition group hover:bg-cyber-cyan/5 cursor-pointer" onclick="openDetailModal('${issue.id}')">
-                    <td class="px-4 py-3 whitespace-nowrap text-xs text-cyber-gray font-mono">${issue.id}</td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm font-rajdhani font-semibold text-cyber-white group-hover:text-cyber-cyan transition">${escapeHtml(issue.title)}</div>
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-orbitron rounded-sm ${getCategoryClass(issue.category)}">${issue.category.toUpperCase()}</span>
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-orbitron rounded-sm ${getStatusClass(issue.status)}">${issue.status.toUpperCase()}</span>
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="text-xs font-orbitron font-bold ${getPriorityClass(issue.priority)}">${issue.priority}</span>
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-xs">
-                        ${issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : '<span class="text-cyber-border">-</span>'}
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-xs text-cyber-gray font-mono">
-                        ${issue.sprintId ? getSprintName(issue.sprintId) : '-'}
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-xs font-medium">
-                        <button onclick="event.stopPropagation(); editIssue('${issue.id}')" class="text-cyber-cyan hover:text-cyber-white transition mr-3">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="event.stopPropagation(); deleteIssue('${issue.id}')" class="text-cyber-red hover:text-cyber-magenta transition">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
         }
 
-        function renderAgentBadge(agentName) {
-            const agent = agents.find(a => a.name === agentName);
-            const color = agent ? agent.color : '#6b7280';
-            const icon = agent ? agent.icon : 'fa-robot';
-            return `<span class="agent-badge" style="border: 1px solid ${color}; color: ${color}; background: ${color}20;">
-                <i class="fas ${icon}"></i>${agentName.replace(' Agent', '')}
-            </span>`;
+        function renderKanban() {
+            const columns = [
+                { id: 'todo', title: 'To Do', status: 'Open' },
+                { id: 'progress', title: 'In Progress', status: 'In Progress' },
+                { id: 'ready', title: 'Ready QA', status: 'Ready for QA' },
+                { id: 'qa', title: 'In QA', status: 'In QA Review' },
+                { id: 'done', title: 'Done', status: 'Closed' }
+            ];
+
+            const container = document.getElementById('kanban-board');
+            const filtered = getFilteredIssues();
+
+            container.innerHTML = columns.map(col => {
+                const colIssues = filtered.filter(i => i.status === col.status || (col.id === 'todo' && i.status === 'Reopened'));
+                return `
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            <div class="kanban-title">
+                                <span class="status-dot ${getStatusDotClass(col.status)}"></span>
+                                ${col.title}
+                            </div>
+                            <span class="kanban-count">${colIssues.length}</span>
+                        </div>
+                        <div class="kanban-content">
+                            ${colIssues.map(issue => renderKanbanCard(issue)).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function getSprintName(id) {
-            const sprint = sprints.find(s => s.id === id);
-            return sprint ? sprint.name : id;
+        function renderKanbanCard(issue) {
+            const agent = agents.find(a => a.name === issue.assignedAgent) || { name: 'Unassigned' };
+            const categoryClass = issue.category.toLowerCase();
+            return `
+                <div class="kanban-card" onclick="openDetail('${issue.id}')">
+                    <div class="card-header">
+                        <span class="card-id font-mono">${issue.id}</span>
+                        <span class="card-priority priority-${issue.priority.toLowerCase()}">${issue.priority}</span>
+                    </div>
+                    <div class="card-title">${escapeHtml(issue.title)}</div>
+                    <div class="card-footer">
+                        <span class="card-category ${categoryClass}">${issue.category}</span>
+                        <span class="card-agent font-mono">${agent.name.split(' ')[0]}</span>
+                    </div>
+                </div>
+            `;
         }
 
-        function getCategoryClass(category) {
+        function renderTable() {
+            const tbody = document.getElementById('issues-table-body');
+            const filtered = getFilteredIssues();
+
+            tbody.innerHTML = filtered.map(issue => {
+                const agent = agents.find(a => a.name === issue.assignedAgent);
+                const sprint = sprints.find(s => s.id === issue.sprintId);
+                return `
+                    <tr onclick="openDetail('${issue.id}')">
+                        <td class="table-issue-id">${issue.id}</td>
+                        <td>${escapeHtml(issue.title)}</td>
+                        <td><span class="badge badge-category ${issue.category.toLowerCase()}">${issue.category}</span></td>
+                        <td><span class="badge badge-status-${issue.status.replace(/\s+/g, '-').toLowerCase()}">${issue.status}</span></td>
+                        <td><span class="card-priority priority-${issue.priority.toLowerCase()}">${issue.priority}</span></td>
+                        <td>${agent ? agent.name : '-'}</td>
+                        <td>${sprint ? sprint.name : '-'}</td>
+                        <td>
+                            <button class="btn" style="padding:4px 8px" onclick="event.stopPropagation();editIssue('${issue.id}')">Edit</button>
+                            <button class="btn" style="padding:4px 8px;color:var(--priority-p0-text)" onclick="event.stopPropagation();deleteIssue('${issue.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderSprints() {
+            const container = document.getElementById('sprints-grid');
+            container.innerHTML = sprints.map(sprint => {
+                const issueCount = issues.filter(i => i.sprintId === sprint.id).length;
+                return `
+                    <div class="sprint-card" onclick="filterBySprint('${sprint.id}')">
+                        <div class="sprint-header">
+                            <div class="sprint-title">${sprint.name}</div>
+                            <span class="sprint-status ${sprint.status.toLowerCase()}"></span>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-secondary)">${sprint.goals || 'No goals set'}</div>
+                        <div class="sprint-meta">
+                            <span>${formatDate(sprint.startDate)} - ${formatDate(sprint.endDate)}</span>
+                            <span>${issueCount} issues</span>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<div class="empty-state">No sprints created yet</div>';
+        }
+
+        // UI Helpers
+        function getFilteredIssues() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const category = document.getElementById('filter-category').value;
+            const priority = document.getElementById('filter-priority').value;
+            const sprint = document.getElementById('filter-sprint').value;
+
+            return issues.filter(issue => {
+                if (search && !issue.title.toLowerCase().includes(search)) return false;
+                if (category && issue.category !== category) return false;
+                if (priority && issue.priority !== priority) return false;
+                if (sprint && issue.sprintId !== sprint) return false;
+                return true;
+            });
+        }
+
+        function getStatusDotClass(status) {
             const classes = {
-                'Feature': 'badge-feature', 'Bug': 'badge-bug',
-                'Security': 'badge-security', 'Sprint': 'badge-sprint'
+                'Open': 'status-open',
+                'In Progress': 'status-progress',
+                'Ready for QA': 'status-ready-qa',
+                'In QA Review': 'status-qa',
+                'Closed': 'status-closed',
+                'Reopened': 'status-reopened'
             };
-            return classes[category] || 'bg-cyber-border text-cyber-gray border-cyber-gray';
-        }
-
-        function getStatusClass(status) {
-            const classes = {
-                'Open': 'status-open', 'In Progress': 'status-progress',
-                'Ready for QA': 'status-ready-qa', 'In QA Review': 'status-qa',
-                'Reopened': 'status-reopened', 'Closed': 'status-closed',
-                'Blocked': 'status-blocked'
-            };
-            return classes[status] || 'bg-cyber-border text-cyber-gray border-cyber-gray';
-        }
-
-        function getPriorityClass(priority) {
-            const classes = { 'P0': 'priority-p0', 'P1': 'priority-p1', 'P2': 'priority-p2', 'P3': 'priority-p3' };
-            return classes[priority] || 'text-cyber-gray';
+            return classes[status] || 'status-open';
         }
 
         function escapeHtml(text) {
@@ -1044,66 +1607,101 @@
             return div.innerHTML;
         }
 
-        // View Switching
-        function showView(view) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`${view}-view`).classList.remove('hidden');
-            
-            document.querySelectorAll('#btn-issues, #btn-sprints, #btn-board').forEach(btn => {
-                btn.classList.remove('bg-cyber-cyan', 'text-cyber-bg');
-                btn.classList.add('bg-transparent', 'border', 'border-cyber-cyan', 'text-cyber-cyan');
-            });
-            
-            const activeBtn = document.getElementById(`btn-${view}`);
-            activeBtn.classList.remove('bg-transparent', 'border', 'border-cyber-cyan', 'text-cyber-cyan');
-            activeBtn.classList.add('bg-cyber-cyan', 'text-cyber-bg');
-            
-            if (view === 'board') loadKanbanBoard();
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
-        // Issue Modal
-        function openModal() {
+        // Event Handlers
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.activity-icon').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Update sidebar visibility
+            const sidebar = document.getElementById('sidebar');
+            if (view === 'dashboard') {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = 'flex';
+            }
+
+            // Show appropriate view
+            document.getElementById('kanban-view').style.display = view === 'board' || view === 'issues' ? 'block' : 'none';
+            document.getElementById('list-view').style.display = view === 'list' ? 'block' : 'none';
+            document.getElementById('sprints-view-content').style.display = view === 'sprints' ? 'block' : 'none';
+
+            updateUI();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.getElementById('kanban-view').style.display = tab === 'kanban' ? 'block' : 'none';
+            document.getElementById('list-view').style.display = tab === 'list' ? 'block' : 'none';
+            document.getElementById('sprints-view-content').style.display = tab === 'sprints' ? 'block' : 'none';
+        }
+
+        function toggleSection(section) {
+            const header = event.currentTarget;
+            const children = document.getElementById(`tree-${section}`);
+            header.classList.toggle('collapsed');
+            children.classList.toggle('collapsed');
+        }
+
+        function setupEventListeners() {
+            ['search-input', 'filter-category', 'filter-priority', 'filter-sprint'].forEach(id => {
+                document.getElementById(id)?.addEventListener('input', updateUI);
+            });
+
+            // Modal backdrop clicks
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.addEventListener('click', (e) => {
+                    if (e.target === backdrop) backdrop.classList.add('hidden');
+                });
+            });
+        }
+
+        // Modal Functions
+        function openIssueModal() {
             document.getElementById('issue-form').reset();
             document.getElementById('issue-id').value = '';
-            document.getElementById('modal-title').textContent = 'NEW ISSUE';
+            document.getElementById('issue-modal-title').textContent = 'New Issue';
             document.getElementById('issue-modal').classList.remove('hidden');
         }
 
-        function closeModal() {
+        function closeIssueModal() {
             document.getElementById('issue-modal').classList.add('hidden');
         }
 
-        function openEditModal(issue) {
-            if (!issue) return;
-            document.getElementById('issue-id').value = issue.id;
-            document.getElementById('title').value = issue.title;
-            document.getElementById('description').value = issue.description || '';
-            document.getElementById('category').value = issue.category;
-            document.getElementById('status').value = issue.status;
-            document.getElementById('priority').value = issue.priority;
-            document.getElementById('sprint-select').value = issue.sprintId || '';
-            document.getElementById('modal-title').textContent = 'EDIT ISSUE';
-            document.getElementById('issue-modal').classList.remove('hidden');
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            currentIssue = null;
         }
 
-        function editIssue(id) {
-            const issue = issues.find(i => i.id === id);
-            openEditModal(issue);
+        function openSprintModal() {
+            document.getElementById('sprint-form').reset();
+            document.getElementById('sprint-modal').classList.remove('hidden');
         }
 
-        document.getElementById('issue-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
+        function closeSprintModal() {
+            document.getElementById('sprint-modal').classList.add('hidden');
+        }
+
+        // CRUD Operations
+        async function saveIssue() {
             const id = document.getElementById('issue-id').value;
             const data = {
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                category: document.getElementById('category').value,
-                status: document.getElementById('status').value,
-                priority: document.getElementById('priority').value,
-                sprintId: document.getElementById('sprint-select').value || null
+                title: document.getElementById('issue-title').value,
+                description: document.getElementById('issue-description').value,
+                category: document.getElementById('issue-category').value,
+                status: document.getElementById('issue-status').value,
+                priority: document.getElementById('issue-priority').value,
+                sprintId: document.getElementById('issue-sprint').value || null
             };
-            
+
             try {
                 if (id) {
                     await fetch(`/api/issues/${id}`, {
@@ -1118,474 +1716,152 @@
                         body: JSON.stringify(data)
                     });
                 }
-                closeModal();
-                loadIssues();
+                await loadIssues();
+                closeIssueModal();
             } catch (error) {
-                alert('Failed to save issue');
-            }
-        });
-
-        async function deleteIssue(id) {
-            if (!confirm('Delete this issue?')) return;
-            try {
-                await fetch(`/api/issues/${id}`, { method: 'DELETE' });
-                loadIssues();
-            } catch (error) {
-                alert('Failed to delete issue');
-            }
-        }
-
-        // Detail Modal
-        function openDetailModal(id) {
-            const issue = issues.find(i => i.id === id);
-            if (!issue) return;
-            currentIssue = issue;
-            
-            document.getElementById('detail-id').textContent = issue.id;
-            document.getElementById('detail-title').textContent = issue.title;
-            document.getElementById('detail-status').innerHTML = 
-                `<span class="px-3 py-1 text-xs font-orbitron rounded-sm ${getStatusClass(issue.status)}">${issue.status.toUpperCase()}</span>`;
-            document.getElementById('detail-category').innerHTML = 
-                `<span class="px-3 py-1 text-xs font-orbitron rounded-sm ${getCategoryClass(issue.category)}">${issue.category.toUpperCase()}</span>`;
-            document.getElementById('detail-priority').innerHTML = 
-                `<span class="text-sm font-orbitron font-bold ${getPriorityClass(issue.priority)}">${issue.priority}</span>`;
-            document.getElementById('detail-agent').innerHTML = issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : '-';
-            document.getElementById('detail-description').textContent = issue.description || 'No description provided.';
-            
-            renderWorkflowActions(issue);
-            renderComments(issue);
-            renderActivityLog(issue);
-            renderWorkflowVisualization();
-            
-            showTab('comments');
-            document.getElementById('detail-modal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detail-modal').classList.add('hidden');
-            currentIssue = null;
-        }
-
-        function renderWorkflowActions(issue) {
-            const container = document.getElementById('action-buttons');
-            const actions = [];
-            
-            if (issue.status === 'In Progress') {
-                actions.push(`<button onclick="markReadyForQA('${issue.id}')" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-check mr-1"></i>Mark Ready for QA
-                </button>`);
-            }
-            
-            if (issue.status === 'Ready for QA') {
-                actions.push(`<button onclick="startQA('${issue.id}')" class="btn-cyber bg-cyber-purple text-white font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-play mr-1"></i>Start QA Review
-                </button>`);
-            }
-            
-            if (issue.status === 'In QA Review') {
-                actions.push(`<button onclick="qaPass('${issue.id}')" class="btn-cyber bg-cyber-green text-cyber-bg font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-check-circle mr-1"></i>QA Pass
-                </button>`);
-                actions.push(`<button onclick="qaFail('${issue.id}')" class="btn-cyber bg-cyber-red text-white font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-times-circle mr-1"></i>QA Fail
-                </button>`);
-            }
-            
-            if (issue.category === 'Feature' && issue.status === 'In Review') {
-                actions.push(`<button onclick="approveFeature('${issue.id}')" class="btn-cyber bg-cyber-green text-cyber-bg font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-thumbs-up mr-1"></i>Approve Feature
-                </button>`);
-            }
-            
-            if (issue.status === 'Reopened') {
-                actions.push(`<button onclick="moveToProgress('${issue.id}')" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-3 py-2 text-xs">
-                    <i class="fas fa-redo mr-1"></i>Move to In Progress
-                </button>`);
-            }
-            
-            container.innerHTML = actions.length ? actions.join('') : 
-                '<span class="text-cyber-gray text-xs">No workflow actions available</span>';
-        }
-
-        function renderComments(issue) {
-            const container = document.getElementById('comments-list');
-            if (!issue.comments || issue.comments.length === 0) {
-                container.innerHTML = '<p class="text-cyber-gray text-sm italic">No comments yet</p>';
-                return;
-            }
-            
-            container.innerHTML = issue.comments.map(comment => {
-                const isSystem = comment.author === 'System';
-                const isQA = comment.author === 'QA Agent';
-                const borderColor = isSystem ? '#d400d4' : isQA ? '#9d00ff' : '#00c8d4';
-                const icon = isSystem ? 'fa-robot' : isQA ? 'fa-check-double' : 'fa-user';
-                
-                return `
-                    <div class="flex gap-3">
-                        <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs" 
-                             style="border: 1px solid ${borderColor}; color: ${borderColor}; background: ${borderColor}20;">
-                            <i class="fas ${icon}"></i>
-                        </div>
-                        <div class="flex-1 comment-bubble" style="border-color: ${borderColor}40;">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-rajdhani font-semibold text-sm" style="color: ${borderColor};">${comment.author}</span>
-                                <span class="text-xs text-cyber-gray font-mono">${formatDateTime(comment.timestamp)}</span>
-                            </div>
-                            <p class="text-cyber-white text-sm font-rajdhani">${escapeHtml(comment.message)}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderActivityLog(issue) {
-            const container = document.getElementById('activity-list');
-            if (!issue.activityLog || issue.activityLog.length === 0) {
-                container.innerHTML = '<p class="text-cyber-gray text-sm italic">No activity recorded</p>';
-                return;
-            }
-            
-            container.innerHTML = issue.activityLog.map((log, index) => {
-                const isLast = index === issue.activityLog.length - 1;
-                const color = getActivityColor(log.action);
-                
-                return `
-                    <div class="timeline-item pb-4 ${isLast ? '' : ''}">
-                        <div class="timeline-dot" style="border-color: ${color};"></div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="font-orbitron text-xs font-bold" style="color: ${color};">${log.action}</span>
-                            <span class="text-xs text-cyber-gray font-mono">${formatDateTime(log.timestamp)}</span>
-                        </div>
-                        <div class="text-sm text-cyber-white font-rajdhani">
-                            ${log.details || ''}
-                            ${log.from && log.to ? `<span class="text-cyber-gray"> ${log.from} → ${log.to}</span>` : ''}
-                            ${log.resolution ? `<div class="mt-1 text-cyber-green text-xs">Resolution: ${escapeHtml(log.resolution)}</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function getActivityColor(action) {
-            const colors = {
-                'Created': '#00c8d4', 'Auto-Assigned': '#d400d4', 'QA Assigned': '#9d00ff',
-                'Sprint Assignment': '#c8c400', 'Status Changed': '#ff6600', 'QA Complete': '#00ff88',
-                'Reassigned': '#ff0040'
-            };
-            return colors[action] || '#6b7280';
-        }
-
-        function renderWorkflowVisualization() {
-            const container = document.getElementById('workflow-visualization');
-            const workflow = ['Open', 'In Progress', 'Ready for QA', 'In QA Review', 'Closed'];
-            const currentStatus = currentIssue ? currentIssue.status : 'Open';
-            
-            container.innerHTML = workflow.map((status, index) => {
-                const isActive = status === currentStatus;
-                const isPast = workflow.indexOf(currentStatus) > index;
-                const bgColor = isActive ? '#00c8d4' : isPast ? '#00ff88' : '#2a2a3a';
-                const textColor = isActive || isPast ? '#0a0a0f' : '#6b7280';
-                
-                const html = `
-                    <div class="px-3 py-2 rounded-sm font-orbitron text-xs" 
-                         style="background: ${bgColor}; color: ${textColor};">
-                        ${status}
-                    </div>
-                `;
-                
-                if (index < workflow.length - 1) {
-                    return html + `<i class="fas fa-arrow-right text-cyber-gray"></i>`;
+                // Demo mode: just update local
+                if (!id) {
+                    const prefix = data.category === 'Bug' ? 'BUG' : data.category === 'Feature' ? 'FET' : data.category === 'Security' ? 'SEC' : 'SPN';
+                    const newId = `${prefix}-${String(issues.length + 1).padStart(3, '0')}`;
+                    issues.push({ ...data, id: newId, assignedAgent: 'Frontend Agent', comments: [], activityLog: [] });
+                } else {
+                    const issue = issues.find(i => i.id === id);
+                    if (issue) Object.assign(issue, data);
                 }
-                return html;
-            }).join('');
-        }
-
-        // Tab Switching
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('tab-active');
-                btn.classList.add('text-cyber-gray');
-            });
-            
-            document.getElementById(`tab-${tab}`).classList.add('tab-active');
-            document.getElementById(`tab-${tab}`).classList.remove('text-cyber-gray');
-            currentTab = tab;
-        }
-
-        // Workflow Actions
-        async function markReadyForQA(id) {
-            const message = prompt('Add completion comment (optional):');
-            try {
-                await fetch(`/api/issues/${id}/ready-for-qa`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ agent: 'Developer Agent', message })
-                });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to mark ready for QA');
+                updateUI();
+                closeIssueModal();
             }
         }
 
-        async function startQA(id) {
-            try {
-                await fetch(`/api/issues/${id}/start-qa`, { method: 'POST' });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to start QA');
-            }
-        }
-
-        async function qaPass(id) {
-            const message = prompt('QA verification comment:');
-            try {
-                await fetch(`/api/issues/${id}/qa-pass`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to complete QA pass');
-            }
-        }
-
-        async function qaFail(id) {
-            const message = prompt('QA failure findings:');
-            try {
-                await fetch(`/api/issues/${id}/qa-fail`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, findings: message })
-                });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to process QA fail');
-            }
-        }
-
-        async function approveFeature(id) {
-            try {
-                await fetch(`/api/issues/${id}/approve`, { method: 'POST' });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to approve feature');
-            }
-        }
-
-        async function moveToProgress(id) {
-            try {
-                await fetch(`/api/issues/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'In Progress' })
-                });
-                await loadIssues();
-                openDetailModal(id);
-            } catch (error) {
-                alert('Failed to update status');
-            }
-        }
-
-        // Comments
-        async function addComment() {
-            if (!currentIssue) return;
-            const message = document.getElementById('new-comment').value.trim();
-            const author = document.getElementById('comment-author').value;
-            
-            if (!message) return;
-            
-            try {
-                await fetch(`/api/issues/${currentIssue.id}/comments`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ author, message })
-                });
-                document.getElementById('new-comment').value = '';
-                await loadIssues();
-                openDetailModal(currentIssue.id);
-            } catch (error) {
-                alert('Failed to add comment');
-            }
-        }
-
-        // Sprints
-        function renderSprints() {
-            const container = document.getElementById('sprints-list');
-            if (sprints.length === 0) {
-                container.innerHTML = '<p class="text-cyber-gray text-center py-8">No sprints created yet</p>';
-                return;
-            }
-            
-            container.innerHTML = sprints.map(sprint => {
-                const statusClass = sprint.status === 'Active' ? 'status-indicator active' : 
-                                   sprint.status === 'Planned' ? 'status-indicator.planned' : 'status-indicator.completed';
-                const statusColor = sprint.status === 'Active' ? '#00ff88' : 
-                                 sprint.status === 'Planned' ? '#c8c400' : '#6b7280';
-                
-                return `
-                    <div class="panel-cyber p-4 cursor-pointer hover:border-cyber-cyan transition" onclick="viewSprint('${sprint.id}')">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-orbitron text-cyber-cyan">${sprint.name}</h3>
-                            <span class="status-indicator" style="background: ${statusColor};"></span>
-                        </div>
-                        <p class="text-cyber-gray text-sm font-rajdhani mb-2">${sprint.goals}</p>
-                        <div class="flex items-center gap-4 text-xs font-mono text-cyber-gray">
-                            <span><i class="fas fa-calendar mr-1"></i>${formatDate(sprint.startDate)} - ${formatDate(sprint.endDate)}</span>
-                            <span><i class="fas fa-tasks mr-1"></i>${sprint.issueIds.length} issues</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function openSprintModal() {
-            document.getElementById('sprint-form').reset();
-            document.getElementById('sprint-modal').classList.remove('hidden');
-        }
-
-        function closeSprintModal() {
-            document.getElementById('sprint-modal').classList.add('hidden');
-        }
-
-        document.getElementById('sprint-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
+        async function saveSprint() {
             const data = {
                 name: document.getElementById('sprint-name').value,
                 startDate: document.getElementById('sprint-start').value,
                 endDate: document.getElementById('sprint-end').value,
-                goals: document.getElementById('sprint-goals').value
+                goals: document.getElementById('sprint-goals').value,
+                status: 'Planned',
+                issueIds: []
             };
-            
+
             try {
                 await fetch('/api/sprints', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                closeSprintModal();
                 await loadSprints();
+                closeSprintModal();
             } catch (error) {
-                alert('Failed to create sprint');
+                // Demo mode
+                const newId = `SPRINT-${String(sprints.length + 1).padStart(3, '0')}`;
+                sprints.push({ ...data, id: newId });
+                updateUI();
+                closeSprintModal();
             }
-        });
-
-        async function viewSprint(id) {
-            // Could implement sprint detail view
-            showView('board');
-            document.getElementById('board-sprint-select').value = id;
-            loadKanbanBoard();
         }
 
-        // Kanban Board
-        function loadKanbanBoard() {
-            const sprintId = document.getElementById('board-sprint-select').value;
-            const sprint = sprintId ? sprints.find(s => s.id === sprintId) : null;
-            
-            document.getElementById('board-sprint-name').textContent = sprint ? sprint.name : 'All Issues';
-            
-            const columns = {
-                todo: issues.filter(i => i.status === 'Open' && (!sprintId || i.sprintId === sprintId)),
-                progress: issues.filter(i => i.status === 'In Progress' && (!sprintId || i.sprintId === sprintId)),
-                readyQA: issues.filter(i => i.status === 'Ready for QA' && (!sprintId || i.sprintId === sprintId)),
-                inQA: issues.filter(i => i.status === 'In QA Review' && (!sprintId || i.sprintId === sprintId)),
-                done: issues.filter(i => i.status === 'Closed' && (!sprintId || i.sprintId === sprintId))
-            };
-            
-            document.getElementById('count-todo').textContent = columns.todo.length;
-            document.getElementById('count-progress').textContent = columns.progress.length;
-            document.getElementById('count-ready-qa').textContent = columns.readyQA.length;
-            document.getElementById('count-in-qa').textContent = columns.inQA.length;
-            document.getElementById('count-done').textContent = columns.done.length;
-            
-            Object.keys(columns).forEach(key => {
-                const container = document.getElementById(`kanban-${key}`);
-                if (columns[key].length === 0) {
-                    container.innerHTML = '<p class="text-cyber-gray text-xs text-center italic py-4">No items</p>';
-                } else {
-                    container.innerHTML = columns[key].map(issue => `
-                        <div class="kanban-card panel-cyber p-3 border-l-2 ${getBorderColor(issue.status)}" onclick="openDetailModal('${issue.id}')">
-                            <div class="flex items-start justify-between mb-2">
-                                <span class="text-xs font-mono text-cyber-gray">${issue.id}</span>
-                                <span class="text-xs font-orbitron ${getPriorityClass(issue.priority)}">${issue.priority}</span>
-                            </div>
-                            <h4 class="text-sm font-rajdhani font-semibold text-cyber-white mb-2 line-clamp-2">${escapeHtml(issue.title)}</h4>
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 text-xs rounded-sm ${getCategoryClass(issue.category)}">${issue.category}</span>
-                                ${issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : ''}
-                            </div>
+        function openDetail(id) {
+            currentIssue = issues.find(i => i.id === id);
+            if (!currentIssue) return;
+
+            document.getElementById('detail-title').textContent = currentIssue.title;
+            document.getElementById('detail-id').textContent = currentIssue.id;
+            document.getElementById('detail-description').textContent = currentIssue.description || 'No description provided.';
+
+            const meta = document.getElementById('detail-meta');
+            meta.innerHTML = `
+                <div class="meta-item">
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value">${currentIssue.status}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Category</div>
+                    <div class="meta-value">${currentIssue.category}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Priority</div>
+                    <div class="meta-value">${currentIssue.priority}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Assigned</div>
+                    <div class="meta-value">${currentIssue.assignedAgent || 'Unassigned'}</div>
+                </div>
+            `;
+
+            const comments = document.getElementById('detail-comments');
+            comments.innerHTML = (currentIssue.comments || []).map(c => `
+                <div class="comment">
+                    <div class="comment-avatar">${c.author[0]}</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">${c.author}</span>
+                            <span class="comment-time">${formatDate(c.timestamp)}</span>
                         </div>
-                    `).join('');
-                }
-            });
+                        <div class="comment-text">${escapeHtml(c.message)}</div>
+                    </div>
+                </div>
+            `).join('') || '<p style="color:var(--text-muted)">No comments yet</p>';
+
+            document.getElementById('detail-modal').classList.remove('hidden');
         }
 
-        function getBorderColor(status) {
-            const colors = {
-                'Open': 'border-cyber-yellow', 'In Progress': 'border-cyber-cyan',
-                'Ready for QA': 'border-cyber-magenta', 'In QA Review': 'border-cyber-purple',
-                'Closed': 'border-cyber-green', 'Reopened': 'border-cyber-orange'
-            };
-            return colors[status] || 'border-cyber-gray';
+        function editCurrentIssue() {
+            if (!currentIssue) return;
+            closeDetailModal();
+            editIssue(currentIssue.id);
         }
 
-        // Event Listeners
-        function setupEventListeners() {
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                currentFilter.search = e.target.value.toLowerCase();
-                renderIssues();
-            });
-            document.getElementById('filter-category').addEventListener('change', (e) => {
-                currentFilter.category = e.target.value;
-                renderIssues();
-            });
-            document.getElementById('filter-status').addEventListener('change', (e) => {
-                currentFilter.status = e.target.value;
-                renderIssues();
-            });
-            document.getElementById('filter-priority').addEventListener('change', (e) => {
-                currentFilter.priority = e.target.value;
-                renderIssues();
-            });
-            document.getElementById('filter-agent').addEventListener('change', (e) => {
-                currentFilter.agent = e.target.value;
-                renderIssues();
-            });
-            
-            // Close modals on backdrop click
-            document.getElementById('issue-modal').addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) closeModal();
-            });
-            document.getElementById('detail-modal').addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) closeDetailModal();
-            });
-            document.getElementById('sprint-modal').addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) closeSprintModal();
-            });
+        function editIssue(id) {
+            const issue = issues.find(i => i.id === id);
+            if (!issue) return;
+
+            document.getElementById('issue-id').value = issue.id;
+            document.getElementById('issue-title').value = issue.title;
+            document.getElementById('issue-description').value = issue.description || '';
+            document.getElementById('issue-category').value = issue.category;
+            document.getElementById('issue-status').value = issue.status;
+            document.getElementById('issue-priority').value = issue.priority;
+            document.getElementById('issue-sprint').value = issue.sprintId || '';
+            document.getElementById('issue-modal-title').textContent = 'Edit Issue';
+            document.getElementById('issue-modal').classList.remove('hidden');
         }
 
-        // Utilities
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        async function deleteIssue(id) {
+            if (!confirm('Delete this issue?')) return;
+            try {
+                await fetch(`/api/issues/${id}`, { method: 'DELETE' });
+                await loadIssues();
+            } catch (error) {
+                issues = issues.filter(i => i.id !== id);
+                updateUI();
+            }
         }
 
-        function formatDateTime(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleString('en-US', { 
-                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-            });
+        async function addComment() {
+            if (!currentIssue) return;
+            const message = document.getElementById('new-comment').value.trim();
+            const author = document.getElementById('comment-author').value;
+            if (!message) return;
+
+            try {
+                await fetch(`/api/issues/${currentIssue.id}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ author, message })
+                });
+                await loadIssues();
+                openDetail(currentIssue.id);
+            } catch (error) {
+                if (!currentIssue.comments) currentIssue.comments = [];
+                currentIssue.comments.push({ author, message, timestamp: new Date().toISOString() });
+                document.getElementById('new-comment').value = '';
+                openDetail(currentIssue.id);
+            }
+        }
+
+        function filterBySprint(sprintId) {
+            document.getElementById('filter-sprint').value = sprintId;
+            updateUI();
         }
     </script>
 </body>

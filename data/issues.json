@@ -100,12 +100,12 @@
     "title": "Client-Side Auth Only",
     "description": "Authentication checks are client-side only (React useEffect). Server-side middleware needed for robust security.",
     "category": "Security",
-    "status": "Open",
+    "status": "Closed",
     "priority": "P1",
     "assignee": "Security Developer",
     "assignedAgent": "Security Developer Agent",
     "created_at": "2026-03-25T20:50:00.000Z",
-    "updated_at": "2026-03-25T20:50:00.000Z",
+    "updated_at": "2026-03-26T21:54:43.129Z",
     "comments": [
       {
         "author": "System",
@@ -123,8 +123,15 @@
         "action": "Auto-Assigned",
         "timestamp": "2026-03-25T20:50:00.000Z",
         "details": "Assigned to Security Developer Agent based on category: Security"
+      },
+      {
+        "action": "Status Changed",
+        "timestamp": "2026-03-26T21:54:43.129Z",
+        "from": "Open",
+        "to": "Closed"
       }
-    ]
+    ],
+    "sprintId": null
   },
   {
     "id": "BUG-003",
@@ -236,14 +243,84 @@
     ]
   },
   {
-    "id": "mn7zihvqrve2nglidzr",
-    "title": "Chart data filtering option not working as expected ",
+    "id": "BUG-005",
+    "title": "Test",
+    "description": "Test BUG report",
+    "category": "Bug",
+    "status": "Open",
+    "priority": "P0",
+    "assignee": "Frontend Developer",
+    "assignedAgent": "Frontend Developer Agent",
+    "sprintId": "SPRINT-001",
+    "qaStatus": null,
+    "created_at": "2026-03-26T21:35:13.965Z",
+    "updated_at": "2026-03-26T21:35:13.965Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-26T21:35:13.965Z",
+        "message": "Issue created and auto-assigned to Frontend Developer Agent based on category: Bug + Frontend"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-26T21:35:13.965Z",
+        "details": "Issue created via Issue Tracker Dashboard"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-26T21:35:13.965Z",
+        "details": "Assigned to Frontend Developer Agent based on category: Bug + Frontend"
+      },
+      {
+        "action": "Sprint Assignment",
+        "timestamp": "2026-03-26T21:35:13.965Z",
+        "details": "Added to Sprint 1 - Dashboard Core"
+      }
+    ]
+  },
+  {
+    "id": "BUG-006",
+    "title": "Chart data filtering option not working as expected",
     "description": "When I choose 1W, 1M and 3M the data on chart not changing with repeat to filter option",
     "category": "Bug",
     "status": "Open",
-    "priority": "P2",
-    "assignee": "",
-    "created_at": "2026-03-26T21:28:36.614Z",
-    "updated_at": "2026-03-26T21:28:36.614Z"
+    "priority": "P0",
+    "assignee": "Data Team",
+    "assignedAgent": "Data Team Agent",
+    "sprintId": "SPRINT-001",
+    "qaStatus": null,
+    "created_at": "2026-03-26T21:37:49.296Z",
+    "updated_at": "2026-03-26T21:49:18.624Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-26T21:37:49.296Z",
+        "message": "Issue created and auto-assigned to Data Team Agent based on category: Bug + Data"
+      },
+      {
+        "author": "Developer Agent",
+        "timestamp": "2026-03-26T21:49:18.624Z",
+        "message": "Server Error  Error: Cannot find module './819.js' Require stack: - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/dist/server/webpack-runtime.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/dist/server/app/dashboard/page.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/require.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/load-components.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/build/utils.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/dev/hot-middleware.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/dev/hot-reloader-webpack.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/lib/router-server.js - /Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/node_modules/next/dist/server/lib/start-server.js  This error happened while generating the page. Any console logs will be displayed in the terminal window. Call Stack Next.js Array.reduce  <anonymous> Next.js Array.map  <anonymous> Next.js <unknown>  file:///Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/dist/server/app/dashboard/page.js (1:169643) Object.<anonymous>  file:///Users/admin/.openclaw/workspace/india-stock-dashboard/frontend/dist/server/app/dashboard/page.js (1:169700) Next.js"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-26T21:37:49.296Z",
+        "details": "Issue created via Issue Tracker Dashboard"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-26T21:37:49.296Z",
+        "details": "Assigned to Data Team Agent based on category: Bug + Data"
+      },
+      {
+        "action": "Sprint Assignment",
+        "timestamp": "2026-03-26T21:37:49.296Z",
+        "details": "Added to Sprint 1 - Dashboard Core"
+      }
+    ]
   }
 ]
