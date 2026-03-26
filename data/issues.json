@@ -1,0 +1,249 @@
+[
+  {
+    "id": "BUG-001",
+    "title": "Frontend Webpack Build Corruption",
+    "description": "Frontend experiences intermittent HTTP 500 errors due to missing webpack chunk ./819.js. Build artifacts appear corrupted.",
+    "category": "Bug",
+    "status": "In Progress",
+    "priority": "P0",
+    "assignee": "Frontend Developer",
+    "assignedAgent": "Frontend Developer Agent",
+    "created_at": "2026-03-25T20:46:00.000Z",
+    "updated_at": "2026-03-26T14:30:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "message": "Issue created and auto-assigned to Frontend Developer Agent based on category: Bug + Frontend"
+      },
+      {
+        "author": "Frontend Developer Agent",
+        "timestamp": "2026-03-26T14:30:00.000Z",
+        "message": "Investigating webpack configuration. Found corrupted cache in node_modules/.cache"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "details": "Issue reported by system monitoring"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "details": "Assigned to Frontend Developer Agent based on category: Bug + Frontend"
+      },
+      {
+        "action": "Status Changed",
+        "timestamp": "2026-03-26T14:30:00.000Z",
+        "from": "Open",
+        "to": "In Progress"
+      }
+    ]
+  },
+  {
+    "id": "BUG-002",
+    "title": "API Response Time Too Slow",
+    "description": "API endpoints taking ~4 seconds to respond, far exceeding acceptable thresholds. Target: <500ms, Actual: ~4s.",
+    "category": "Bug",
+    "status": "Closed",
+    "priority": "P1",
+    "assignee": "Backend Developer",
+    "assignedAgent": "Backend Developer Agent",
+    "created_at": "2026-03-25T20:46:00.000Z",
+    "updated_at": "2026-03-26T10:15:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "message": "Issue created and auto-assigned to Backend Developer Agent based on category: Bug + Backend"
+      },
+      {
+        "author": "Backend Developer Agent",
+        "timestamp": "2026-03-26T09:00:00.000Z",
+        "message": "Identified N+1 query problem in the stock price fetcher. Adding database indexes."
+      },
+      {
+        "author": "Backend Developer Agent",
+        "timestamp": "2026-03-26T10:15:00.000Z",
+        "message": "Fixed by optimizing database queries and adding Redis caching layer. Response time now <200ms."
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "details": "Performance issue reported"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-25T20:46:00.000Z",
+        "details": "Assigned to Backend Developer Agent based on category: Bug + Backend"
+      },
+      {
+        "action": "Status Changed",
+        "timestamp": "2026-03-26T09:00:00.000Z",
+        "from": "Open",
+        "to": "In Progress"
+      },
+      {
+        "action": "Status Changed",
+        "timestamp": "2026-03-26T10:15:00.000Z",
+        "from": "In Progress",
+        "to": "Closed",
+        "resolution": "Fixed N+1 query issue and added Redis caching. Average response time reduced from 4s to 180ms."
+      }
+    ]
+  },
+  {
+    "id": "SI-001",
+    "title": "Client-Side Auth Only",
+    "description": "Authentication checks are client-side only (React useEffect). Server-side middleware needed for robust security.",
+    "category": "Security",
+    "status": "Open",
+    "priority": "P1",
+    "assignee": "Security Developer",
+    "assignedAgent": "Security Developer Agent",
+    "created_at": "2026-03-25T20:50:00.000Z",
+    "updated_at": "2026-03-25T20:50:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "message": "Issue created and auto-assigned to Security Developer Agent based on category: Security"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "details": "Security vulnerability identified"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "details": "Assigned to Security Developer Agent based on category: Security"
+      }
+    ]
+  },
+  {
+    "id": "BUG-003",
+    "title": "Yahoo Finance API Blocked",
+    "description": "Yahoo Finance API blocked on current network. System falls back to mock data. Limited to mock data for indices.",
+    "category": "Bug",
+    "status": "Open",
+    "priority": "P2",
+    "assignee": "Data Integration Team",
+    "assignedAgent": "Data Team Agent",
+    "created_at": "2026-03-25T19:40:00.000Z",
+    "updated_at": "2026-03-25T19:40:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-25T19:40:00.000Z",
+        "message": "Issue created and auto-assigned to Data Team Agent based on category: Bug + Data"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-25T19:40:00.000Z",
+        "details": "External API dependency issue reported"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-25T19:40:00.000Z",
+        "details": "Assigned to Data Team Agent based on category: Bug + Data"
+      }
+    ]
+  },
+  {
+    "id": "FET-001",
+    "title": "Loading Spinner Timeout",
+    "description": "Loading states may persist indefinitely on slow connections without timeout. Need 10 second timeout and error state.",
+    "category": "Feature",
+    "status": "In Review",
+    "priority": "P2",
+    "assignee": "Architecture Review",
+    "assignedAgent": "Architecture Agent",
+    "created_at": "2026-03-25T20:50:00.000Z",
+    "updated_at": "2026-03-26T16:00:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "message": "Feature request created and assigned to Architecture Agent for feasibility review"
+      },
+      {
+        "author": "Architecture Agent",
+        "timestamp": "2026-03-26T11:00:00.000Z",
+        "message": "Feasibility Review: This feature is technically feasible. Recommend adding configurable timeout with retry logic. Low implementation risk."
+      },
+      {
+        "author": "System",
+        "timestamp": "2026-03-26T16:00:00.000Z",
+        "message": "Feature approved by user. Status changed to In Review awaiting implementation assignment."
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "details": "Feature request submitted"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-25T20:50:00.000Z",
+        "details": "Assigned to Architecture Agent for feasibility review (Feature workflow)"
+      },
+      {
+        "action": "Status Changed",
+        "timestamp": "2026-03-26T16:00:00.000Z",
+        "from": "Open",
+        "to": "In Review"
+      }
+    ]
+  },
+  {
+    "id": "SPRINT-001",
+    "title": "Q2 2026 Sprint Planning",
+    "description": "Plan and organize development sprints for Q2 2026. Include resource allocation and milestone definitions.",
+    "category": "Sprint",
+    "status": "Open",
+    "priority": "P1",
+    "assignee": "Project Management",
+    "assignedAgent": "Project Manager Agent",
+    "created_at": "2026-03-26T08:00:00.000Z",
+    "updated_at": "2026-03-26T08:00:00.000Z",
+    "comments": [
+      {
+        "author": "System",
+        "timestamp": "2026-03-26T08:00:00.000Z",
+        "message": "Issue created and auto-assigned to Project Manager Agent based on category: Sprint"
+      }
+    ],
+    "activityLog": [
+      {
+        "action": "Created",
+        "timestamp": "2026-03-26T08:00:00.000Z",
+        "details": "Sprint planning initiated"
+      },
+      {
+        "action": "Auto-Assigned",
+        "timestamp": "2026-03-26T08:00:00.000Z",
+        "details": "Assigned to Project Manager Agent based on category: Sprint"
+      }
+    ]
+  },
+  {
+    "id": "mn7zihvqrve2nglidzr",
+    "title": "Chart data filtering option not working as expected ",
+    "description": "When I choose 1W, 1M and 3M the data on chart not changing with repeat to filter option",
+    "category": "Bug",
+    "status": "Open",
+    "priority": "P2",
+    "assignee": "",
+    "created_at": "2026-03-26T21:28:36.614Z",
+    "updated_at": "2026-03-26T21:28:36.614Z"
+  }
+]

@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Tracker // Agile Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0a0a0f',
+                            bgAlt: '#12121a',
+                            panel: '#1a1a24',
+                            border: '#2a2a3a',
+                            cyan: '#00c8d4',
+                            magenta: '#d400d4',
+                            yellow: '#c8c400',
+                            red: '#ff0040',
+                            green: '#00ff88',
+                            orange: '#ff6600',
+                            purple: '#9d00ff',
+                            white: '#e0e0e0',
+                            gray: '#6b7280'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'monospace'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        rajdhani: ['Rajdhani', 'sans-serif']
+                    },
+                    animation: {
+                        'glow-pulse': 'glow-pulse 3s ease-in-out infinite alternate',
+                        'border-glow': 'border-glow 3s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        'glow-pulse': {
+                            '0%': { boxShadow: '0 0 3px #00c8d4, 0 0 6px #00c8d4' },
+                            '100%': { boxShadow: '0 0 8px #00c8d4, 0 0 12px #00c8d4' }
+                        },
+                        'border-glow': {
+                            '0%': { borderColor: '#00c8d4' },
+                            '100%': { borderColor: '#d400d4' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .cyber-bg {
+            background-image: 
+                linear-gradient(rgba(0, 200, 212, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 200, 212, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .scanlines::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.15) 50%,
+                rgba(0, 0, 0, 0.15)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.2;
+        }
+        
+        .text-glow-cyan { text-shadow: 0 0 3px #00c8d4, 0 0 6px #00c8d4; }
+        .text-glow-magenta { text-shadow: 0 0 3px #d400d4, 0 0 6px #d400d4; }
+        .text-glow-yellow { text-shadow: 0 0 3px #c8c400, 0 0 6px #c8c400; }
+        .text-glow-red { text-shadow: 0 0 3px #ff0040, 0 0 6px #ff0040; }
+        .text-glow-green { text-shadow: 0 0 3px #00ff88, 0 0 6px #00ff88; }
+        
+        .border-glow-cyan {
+            box-shadow: 0 0 3px #00c8d4, inset 0 0 3px #00c8d4;
+            border-color: #00c8d4;
+        }
+        .border-glow-magenta {
+            box-shadow: 0 0 3px #d400d4, inset 0 0 3px #d400d4;
+            border-color: #d400d4;
+        }
+        
+        .btn-cyber {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+        .btn-cyber:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 12px rgba(0, 200, 212, 0.4);
+        }
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-cyber:hover::before {
+            left: 100%;
+        }
+        
+        .input-cyber {
+            background: rgba(10, 10, 15, 0.8);
+            border: 1px solid #2a2a3a;
+            color: #00c8d4;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        .input-cyber:focus {
+            outline: none;
+            border-color: #00c8d4;
+            box-shadow: 0 0 6px rgba(0, 200, 212, 0.25);
+        }
+        .input-cyber::placeholder { color: #4a4a5a; }
+        
+        .select-cyber {
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid #2a2a3a;
+            color: #00c8d4;
+            font-family: 'Rajdhani', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .select-cyber:focus {
+            outline: none;
+            border-color: #d400d4;
+            box-shadow: 0 0 6px rgba(212, 0, 212, 0.25);
+        }
+        
+        .panel-cyber {
+            background: linear-gradient(135deg, rgba(26, 26, 36, 0.9) 0%, rgba(18, 18, 26, 0.95) 100%);
+            border: 1px solid #2a2a3a;
+            position: relative;
+            overflow: hidden;
+        }
+        .panel-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00c8d4, transparent);
+            opacity: 0.7;
+        }
+        
+        .table-cyber {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .table-cyber th {
+            background: linear-gradient(180deg, rgba(0, 200, 212, 0.08) 0%, transparent 100%);
+            color: #00c8d4;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #00c8d4;
+            opacity: 0.9;
+        }
+        .table-cyber tr:hover td {
+            background: rgba(0, 200, 212, 0.04);
+        }
+        .table-cyber td {
+            border-bottom: 1px solid #2a2a3a;
+        }
+        
+        .badge-feature { background: rgba(0, 200, 212, 0.12); border: 1px solid #00c8d4; color: #00c8d4; box-shadow: 0 0 3px rgba(0, 200, 212, 0.2); }
+        .badge-bug { background: rgba(255, 0, 64, 0.12); border: 1px solid #ff0040; color: #ff0040; box-shadow: 0 0 3px rgba(255, 0, 64, 0.2); }
+        .badge-security { background: rgba(212, 0, 212, 0.12); border: 1px solid #d400d4; color: #d400d4; box-shadow: 0 0 3px rgba(212, 0, 212, 0.2); }
+        .badge-sprint { background: rgba(200, 196, 0, 0.12); border: 1px solid #c8c400; color: #c8c400; box-shadow: 0 0 3px rgba(200, 196, 0, 0.2); }
+        
+        .status-open { background: rgba(255, 102, 0, 0.12); border: 1px solid #ff6600; color: #ff6600; }
+        .status-progress { background: rgba(0, 200, 212, 0.12); border: 1px solid #00c8d4; color: #00c8d4; }
+        .status-closed { background: rgba(0, 255, 136, 0.12); border: 1px solid #00ff88; color: #00ff88; }
+        .status-blocked { background: rgba(255, 0, 64, 0.12); border: 1px solid #ff0040; color: #ff0040; }
+        .status-qa { background: rgba(157, 0, 255, 0.12); border: 1px solid #9d00ff; color: #9d00ff; }
+        .status-ready-qa { background: rgba(212, 0, 212, 0.12); border: 1px solid #d400d4; color: #d400d4; }
+        .status-reopened { background: rgba(255, 102, 0, 0.12); border: 1px solid #ff6600; color: #ff6600; }
+        
+        .priority-p0 { color: #ff0040; text-shadow: 0 0 3px rgba(255, 0, 64, 0.5); }
+        .priority-p1 { color: #ff6600; text-shadow: 0 0 3px rgba(255, 102, 0, 0.5); }
+        .priority-p2 { color: #c8c400; text-shadow: 0 0 3px rgba(200, 196, 0, 0.5); }
+        .priority-p3 { color: #00ff88; text-shadow: 0 0 3px rgba(0, 255, 136, 0.5); }
+        
+        .modal-cyber {
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid #00c8d4;
+            box-shadow: 0 0 20px rgba(0, 200, 212, 0.2);
+        }
+        .modal-cyber::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, #d400d4, #00c8d4, #c8c400, #d400d4);
+            animation: gradient-shift 4s linear infinite;
+            background-size: 200% 100%;
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        .corner-tl, .corner-tr, .corner-bl, .corner-br {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-color: #00c8d4;
+            border-style: solid;
+            opacity: 0.7;
+        }
+        .corner-tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+        .corner-tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+        .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+        .corner-br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00c8d4; }
+        
+        .tab-active {
+            background: rgba(0, 200, 212, 0.15);
+            border-bottom: 2px solid #00c8d4;
+            color: #00c8d4;
+        }
+        
+        .kanban-column {
+            min-height: 200px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .kanban-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 200, 212, 0.2);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 24px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            bottom: -16px;
+            width: 2px;
+            background: linear-gradient(to bottom, #00c8d4, #d400d4);
+            opacity: 0.3;
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #00c8d4;
+            background: #0a0a0f;
+        }
+        
+        .agent-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        .comment-bubble {
+            position: relative;
+            background: rgba(26, 26, 36, 0.8);
+            border: 1px solid #2a2a3a;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .comment-bubble::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 6px solid #2a2a3a;
+        }
+        
+        .workflow-arrow {
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+        }
+        .workflow-arrow i {
+            margin: 0 8px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-indicator.active { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+        .status-indicator.planned { background: #c8c400; }
+        .status-indicator.completed { background: #6b7280; }
+    </style>
+</head>
+<body class="cyber-bg scanlines min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-7xl relative z-10">
+        <!-- Header -->
+        <div class="mb-6 relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-orbitron font-black text-cyber-cyan text-glow-cyan mb-1 tracking-wider">
+                        <i class="fas fa-bug mr-3"></i>ISSUE TRACKER
+                    </h1>
+                    <p class="text-cyber-gray font-rajdhani text-base tracking-wide">
+                        <span class="text-cyber-magenta">></span> AGILE WORKFLOW ENGINE <span class="text-cyber-magenta">|</span> 
+                        <span class="text-cyber-green">ONLINE</span> <span class="text-cyber-magenta">|</span>
+                        QA ENABLED
+                    </p>
+                </div>
+                <div class="text-right">
+                    <div class="text-cyber-cyan font-mono text-sm">
+                        <span id="system-time">--:--:--</span>
+                    </div>
+                    <div class="text-cyber-gray font-mono text-xs mt-1">
+                        <span class="text-cyber-magenta">PORT:</span> 8080
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 h-px bg-gradient-to-r from-transparent via-cyber-cyan to-transparent opacity-70"></div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="flex gap-2 mb-4">
+            <button onclick="showView('issues')" id="btn-issues" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase tracking-wider">
+                <i class="fas fa-list mr-2"></i>Issues
+            </button>
+            <button onclick="showView('sprints')" id="btn-sprints" class="btn-cyber bg-transparent border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 font-orbitron px-4 py-2 text-sm uppercase tracking-wider">
+                <i class="fas fa-running mr-2"></i>Sprints
+            </button>
+            <button onclick="showView('board')" id="btn-board" class="btn-cyber bg-transparent border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 font-orbitron px-4 py-2 text-sm uppercase tracking-wider">
+                <i class="fas fa-columns mr-2"></i>Kanban Board
+            </button>
+        </div>
+
+        <!-- Issues View -->
+        <div id="issues-view" class="view-section">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-7 gap-3 mb-4">
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-gray relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-gray font-rajdhani uppercase">Total</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-white" id="stat-total">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-yellow relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-yellow font-rajdhani uppercase">Open</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-yellow" id="stat-open">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-cyan relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-cyan font-rajdhani uppercase">In Progress</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-cyan" id="stat-progress">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-magenta relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-magenta font-rajdhani uppercase">Ready QA</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-magenta" id="stat-ready-qa">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-purple relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-purple font-rajdhani uppercase">In QA</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-purple" id="stat-in-qa">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-orange relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-orange font-rajdhani uppercase">Reopened</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-orange" id="stat-reopened">0</div>
+                </div>
+                <div class="stat-card panel-cyber p-3 border-l-2 border-cyber-green relative">
+                    <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                    <div class="text-xs text-cyber-green font-rajdhani uppercase">Closed</div>
+                    <div class="text-2xl font-orbitron font-bold text-cyber-green" id="stat-closed">0</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="panel-cyber mb-4 p-4 relative">
+                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                <div class="flex flex-wrap gap-3 items-end">
+                    <div class="flex-1 min-w-[180px]">
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Search</label>
+                        <input type="text" id="search-input" placeholder="Search issues..." 
+                               class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Category</label>
+                        <select id="filter-category" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[120px]">
+                            <option value="">ALL</option>
+                            <option value="Feature">FEATURE</option>
+                            <option value="Bug">BUG</option>
+                            <option value="Security">SECURITY</option>
+                            <option value="Sprint">SPRINT</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Status</label>
+                        <select id="filter-status" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[120px]">
+                            <option value="">ALL STATUS</option>
+                            <option value="Open">OPEN</option>
+                            <option value="In Progress">IN PROGRESS</option>
+                            <option value="Ready for QA">READY FOR QA</option>
+                            <option value="In QA Review">IN QA REVIEW</option>
+                            <option value="Reopened">REOPENED</option>
+                            <option value="Closed">CLOSED</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Priority</label>
+                        <select id="filter-priority" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[100px]">
+                            <option value="">ALL</option>
+                            <option value="P0">P0</option>
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                            <option value="P3">P3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Agent</label>
+                        <select id="filter-agent" class="select-cyber px-3 py-2 rounded-sm text-sm min-w-[140px]">
+                            <option value="">ALL AGENTS</option>
+                        </select>
+                    </div>
+                    <button onclick="openModal()" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron font-bold px-5 py-2 text-sm uppercase">
+                        <i class="fas fa-plus mr-2"></i> New Issue
+                    </button>
+                </div>
+            </div>
+
+            <!-- Issues Table -->
+            <div class="panel-cyber overflow-hidden relative">
+                <div class="corner-tl"></div><div class="corner-tr"></div>
+                <table class="min-w-full table-cyber">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Title</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Category</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Priority</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Agent</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Sprint</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issues-table-body" class="divide-y divide-cyber-border">
+                        <!-- Issues loaded here -->
+                    </tbody>
+                </table>
+                <div id="empty-state" class="hidden p-8 text-center">
+                    <i class="fas fa-clipboard-list text-5xl text-cyber-gray opacity-30 mb-3"></i>
+                    <p class="text-cyber-gray font-rajdhani">No issues found.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sprints View -->
+        <div id="sprints-view" class="view-section hidden">
+            <div class="panel-cyber mb-4 p-4">
+                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-orbitron text-cyber-cyan"><i class="fas fa-running mr-2"></i>Sprint Management</h2>
+                    <button onclick="openSprintModal()" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
+                        <i class="fas fa-plus mr-2"></i>New Sprint
+                    </button>
+                </div>
+            </div>
+            <div id="sprints-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Sprints loaded here -->
+            </div>
+        </div>
+
+        <!-- Kanban Board View -->
+        <div id="board-view" class="view-section hidden">
+            <div class="panel-cyber mb-4 p-4">
+                <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-orbitron text-cyber-cyan"><i class="fas fa-columns mr-2"></i>Kanban Board</h2>
+                        <p class="text-cyber-gray text-sm font-rajdhani mt-1" id="board-sprint-name">All Issues</p>
+                    </div>
+                    <select id="board-sprint-select" onchange="loadKanbanBoard()" class="select-cyber px-3 py-2 rounded-sm text-sm">
+                        <option value="">All Sprints</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <!-- To Do Column -->
+                <div class="panel-cyber p-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-orbitron text-sm text-cyber-yellow">
+                            <span class="status-indicator" style="background: #ff6600;"></span>To Do
+                        </h3>
+                        <span class="text-xs text-cyber-gray font-mono" id="count-todo">0</span>
+                    </div>
+                    <div id="kanban-todo" class="kanban-column space-y-2">
+                        <!-- Cards loaded here -->
+                    </div>
+                </div>
+                <!-- In Progress Column -->
+                <div class="panel-cyber p-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-orbitron text-sm text-cyber-cyan">
+                            <span class="status-indicator" style="background: #00c8d4;"></span>In Progress
+                        </h3>
+                        <span class="text-xs text-cyber-gray font-mono" id="count-progress">0</span>
+                    </div>
+                    <div id="kanban-progress" class="kanban-column space-y-2">
+                        <!-- Cards loaded here -->
+                    </div>
+                </div>
+                <!-- Ready for QA Column -->
+                <div class="panel-cyber p-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-orbitron text-sm text-cyber-magenta">
+                            <span class="status-indicator" style="background: #d400d4;"></span>Ready QA
+                        </h3>
+                        <span class="text-xs text-cyber-gray font-mono" id="count-ready-qa">0</span>
+                    </div>
+                    <div id="kanban-ready-qa" class="kanban-column space-y-2">
+                        <!-- Cards loaded here -->
+                    </div>
+                </div>
+                <!-- In QA Review Column -->
+                <div class="panel-cyber p-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-orbitron text-sm text-cyber-purple">
+                            <span class="status-indicator" style="background: #9d00ff;"></span>In QA
+                        </h3>
+                        <span class="text-xs text-cyber-gray font-mono" id="count-in-qa">0</span>
+                    </div>
+                    <div id="kanban-in-qa" class="kanban-column space-y-2">
+                        <!-- Cards loaded here -->
+                    </div>
+                </div>
+                <!-- Done Column -->
+                <div class="panel-cyber p-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-orbitron text-sm text-cyber-green">
+                            <span class="status-indicator" style="background: #00ff88;"></span>Done
+                        </h3>
+                        <span class="text-xs text-cyber-gray font-mono" id="count-done">0</span>
+                    </div>
+                    <div id="kanban-done" class="kanban-column space-y-2">
+                        <!-- Cards loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Modal -->
+    <div id="issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-8">
+        <div class="modal-cyber max-w-2xl w-full mx-4 relative">
+            <div class="bg-cyber-bg p-6">
+                <div class="flex items-center justify-between mb-6 border-b border-cyber-border pb-4">
+                    <h3 class="text-xl font-orbitron font-bold text-cyber-cyan" id="modal-title">NEW ISSUE</h3>
+                    <button onclick="closeModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="issue-form" class="space-y-4">
+                    <input type="hidden" id="issue-id">
+                    
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">
+                            <span class="text-cyber-magenta">*</span> Title
+                        </label>
+                        <input type="text" id="title" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Description</label>
+                        <textarea id="description" rows="3" class="w-full input-cyber px-3 py-2 rounded-sm text-sm"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">
+                                <span class="text-cyber-magenta">*</span> Category
+                            </label>
+                            <select id="category" required class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
+                                <option value="Feature">FEATURE</option>
+                                <option value="Bug">BUG</option>
+                                <option value="Security">SECURITY</option>
+                                <option value="Sprint">SPRINT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Status</label>
+                            <select id="status" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
+                                <option value="Open">OPEN</option>
+                                <option value="In Progress">IN PROGRESS</option>
+                                <option value="Ready for QA">READY FOR QA</option>
+                                <option value="In QA Review">IN QA REVIEW</option>
+                                <option value="Reopened">REOPENED</option>
+                                <option value="Closed">CLOSED</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Priority</label>
+                            <select id="priority" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
+                                <option value="P0">P0 - CRITICAL</option>
+                                <option value="P1">P1 - HIGH</option>
+                                <option value="P2" selected>P2 - MEDIUM</option>
+                                <option value="P3">P3 - LOW</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Sprint</label>
+                            <select id="sprint-select" class="w-full select-cyber px-3 py-2 rounded-sm text-sm">
+                                <option value="">No Sprint</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-3 pt-4 border-t border-cyber-border">
+                        <button type="button" onclick="closeModal()" class="btn-cyber bg-transparent border border-cyber-gray text-cyber-gray hover:text-cyber-white hover:border-cyber-white font-orbitron px-4 py-2 text-sm uppercase">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
+                            Save Issue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Detail Modal -->
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm overflow-y-auto py-4">
+        <div class="modal-cyber max-w-4xl w-full mx-4 relative max-h-[90vh] flex flex-col">
+            <div class="bg-cyber-bg p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-4 border-b border-cyber-border pb-4">
+                    <div>
+                        <h3 class="text-2xl font-orbitron font-bold text-cyber-cyan" id="detail-title">Issue Details</h3>
+                        <p class="text-cyber-gray font-mono text-sm mt-1" id="detail-id">BUG-001</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="openEditModal(currentIssue)" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-3 py-2 text-sm">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
+                        <button onclick="closeDetailModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Issue Header Info -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="panel-cyber p-3">
+                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Status</div>
+                        <div id="detail-status" class="mt-1"></div>
+                    </div>
+                    <div class="panel-cyber p-3">
+                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Category</div>
+                        <div id="detail-category" class="mt-1"></div>
+                    </div>
+                    <div class="panel-cyber p-3">
+                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Priority</div>
+                        <div id="detail-priority" class="mt-1"></div>
+                    </div>
+                    <div class="panel-cyber p-3">
+                        <div class="text-xs text-cyber-gray font-rajdhani uppercase">Assigned Agent</div>
+                        <div id="detail-agent" class="mt-1"></div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="panel-cyber p-4 mb-6">
+                    <h4 class="text-sm font-orbitron text-cyber-cyan mb-2 uppercase">Description</h4>
+                    <p id="detail-description" class="text-cyber-white text-sm leading-relaxed font-rajdhani"></p>
+                </div>
+
+                <!-- Workflow Actions -->
+                <div id="workflow-actions" class="mb-6 panel-cyber p-4 border-l-2 border-cyber-magenta">
+                    <h4 class="text-sm font-orbitron text-cyber-magenta mb-3 uppercase"><i class="fas fa-exchange-alt mr-2"></i>Workflow Actions</h4>
+                    <div id="action-buttons" class="flex flex-wrap gap-2">
+                        <!-- Dynamic action buttons -->
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="border-b border-cyber-border mb-4">
+                    <div class="flex gap-1">
+                        <button onclick="showTab('comments')" id="tab-comments" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition tab-active">
+                            <i class="fas fa-comments mr-2"></i>Comments
+                        </button>
+                        <button onclick="showTab('activity')" id="tab-activity" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition text-cyber-gray hover:text-cyber-white">
+                            <i class="fas fa-history mr-2"></i>Activity Log
+                        </button>
+                        <button onclick="showTab('workflow')" id="tab-workflow" class="tab-btn px-4 py-2 text-sm font-orbitron uppercase transition text-cyber-gray hover:text-cyber-white">
+                            <i class="fas fa-project-diagram mr-2"></i>Workflow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="tab-content-comments" class="tab-content">
+                    <div id="comments-list" class="space-y-4 mb-4">
+                        <!-- Comments loaded here -->
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-comment" placeholder="Add a comment..." 
+                               class="flex-1 input-cyber px-3 py-2 rounded-sm text-sm">
+                        <select id="comment-author" class="select-cyber px-3 py-2 rounded-sm text-sm">
+                            <option value="Developer Agent">Developer Agent</option>
+                            <option value="QA Agent">QA Agent</option>
+                            <option value="Architecture Agent">Architecture Agent</option>
+                            <option value="Project Manager Agent">Project Manager Agent</option>
+                        </select>
+                        <button onclick="addComment()" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-4 py-2 text-sm">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-content-activity" class="tab-content hidden">
+                    <div id="activity-list" class="space-y-0">
+                        <!-- Activity log loaded here -->
+                    </div>
+                </div>
+
+                <div id="tab-content-workflow" class="tab-content hidden">
+                    <div class="panel-cyber p-4">
+                        <h4 class="text-sm font-orbitron text-cyber-cyan mb-4">Status Workflow</h4>
+                        <div id="workflow-visualization" class="flex flex-wrap items-center gap-2 text-sm">
+                            <!-- Workflow visualization -->
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-cyber-border">
+                            <h4 class="text-sm font-orbitron text-cyber-cyan mb-2">Agent Assignment Rules</h4>
+                            <ul class="text-xs text-cyber-gray font-rajdhani space-y-1">
+                                <li><span class="text-cyber-magenta">Bug + Frontend</span> → Frontend Developer Agent</li>
+                                <li><span class="text-cyber-magenta">Bug + Backend</span> → Backend Developer Agent</li>
+                                <li><span class="text-cyber-magenta">Bug + Data</span> → Data Team Agent</li>
+                                <li><span class="text-cyber-magenta">Security</span> → Security Developer Agent</li>
+                                <li><span class="text-cyber-magenta">Feature</span> → Architecture Agent → Dev Agent</li>
+                                <li><span class="text-cyber-magenta">Sprint</span> → Project Manager Agent</li>
+                                <li><span class="text-cyber-magenta">Dev Complete</span> → QA Agent</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sprint Modal -->
+    <div id="sprint-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 backdrop-blur-sm">
+        <div class="modal-cyber max-w-lg w-full mx-4 relative">
+            <div class="bg-cyber-bg p-6">
+                <div class="flex items-center justify-between mb-6 border-b border-cyber-border pb-4">
+                    <h3 class="text-xl font-orbitron font-bold text-cyber-cyan">NEW SPRINT</h3>
+                    <button onclick="closeSprintModal()" class="text-cyber-gray hover:text-cyber-white text-xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="sprint-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Sprint Name</label>
+                        <input type="text" id="sprint-name" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Start Date</label>
+                            <input type="date" id="sprint-start" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">End Date</label>
+                            <input type="date" id="sprint-end" required class="w-full input-cyber px-3 py-2 rounded-sm text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-orbitron text-cyber-cyan mb-1 uppercase">Goals</label>
+                        <textarea id="sprint-goals" rows="2" class="w-full input-cyber px-3 py-2 rounded-sm text-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-cyber-border">
+                        <button type="button" onclick="closeSprintModal()" class="btn-cyber bg-transparent border border-cyber-gray text-cyber-gray hover:text-cyber-white hover:border-cyber-white font-orbitron px-4 py-2 text-sm uppercase">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron font-bold px-4 py-2 text-sm uppercase">
+                            Create Sprint
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let issues = [];
+        let sprints = [];
+        let agents = [];
+        let currentFilter = { search: '', category: '', status: '', priority: '', agent: '' };
+        let currentIssue = null;
+        let currentTab = 'comments';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            updateTime();
+            setInterval(updateTime, 1000);
+            setupEventListeners();
+        });
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('system-time').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        async function loadData() {
+            await Promise.all([loadIssues(), loadSprints(), loadAgents()]);
+        }
+
+        async function loadIssues() {
+            try {
+                const response = await fetch('/api/issues');
+                issues = await response.json();
+                updateStats();
+                renderIssues();
+                loadKanbanBoard();
+            } catch (error) {
+                console.error('Failed to load issues:', error);
+            }
+        }
+
+        async function loadSprints() {
+            try {
+                const response = await fetch('/api/sprints');
+                sprints = await response.json();
+                renderSprints();
+                updateSprintSelects();
+            } catch (error) {
+                console.error('Failed to load sprints:', error);
+            }
+        }
+
+        async function loadAgents() {
+            try {
+                const response = await fetch('/api/agents');
+                agents = await response.json();
+                updateAgentFilter();
+            } catch (error) {
+                console.error('Failed to load agents:', error);
+            }
+        }
+
+        function updateStats() {
+            const stats = {
+                total: issues.length,
+                open: issues.filter(i => i.status === 'Open').length,
+                progress: issues.filter(i => i.status === 'In Progress').length,
+                readyQA: issues.filter(i => i.status === 'Ready for QA').length,
+                inQA: issues.filter(i => i.status === 'In QA Review').length,
+                reopened: issues.filter(i => i.status === 'Reopened').length,
+                closed: issues.filter(i => i.status === 'Closed').length
+            };
+            
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-open').textContent = stats.open;
+            document.getElementById('stat-progress').textContent = stats.progress;
+            document.getElementById('stat-ready-qa').textContent = stats.readyQA;
+            document.getElementById('stat-in-qa').textContent = stats.inQA;
+            document.getElementById('stat-reopened').textContent = stats.reopened;
+            document.getElementById('stat-closed').textContent = stats.closed;
+        }
+
+        function updateAgentFilter() {
+            const select = document.getElementById('filter-agent');
+            select.innerHTML = '<option value="">ALL AGENTS</option>' + 
+                agents.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+        }
+
+        function updateSprintSelects() {
+            const selects = ['sprint-select', 'board-sprint-select'];
+            selects.forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    const currentValue = select.value;
+                    const options = id === 'board-sprint-select' 
+                        ? '<option value="">All Sprints</option>' 
+                        : '<option value="">No Sprint</option>';
+                    select.innerHTML = options + sprints.map(s => 
+                        `<option value="${s.id}">${s.name}</option>`).join('');
+                    select.value = currentValue;
+                }
+            });
+        }
+
+        function renderIssues() {
+            const tbody = document.getElementById('issues-table-body');
+            const emptyState = document.getElementById('empty-state');
+            
+            let filtered = issues.filter(issue => {
+                const matchesSearch = !currentFilter.search || 
+                    issue.title.toLowerCase().includes(currentFilter.search) ||
+                    (issue.description && issue.description.toLowerCase().includes(currentFilter.search));
+                const matchesCategory = !currentFilter.category || issue.category === currentFilter.category;
+                const matchesStatus = !currentFilter.status || issue.status === currentFilter.status;
+                const matchesPriority = !currentFilter.priority || issue.priority === currentFilter.priority;
+                const matchesAgent = !currentFilter.agent || issue.assignedAgent === currentFilter.agent;
+                
+                return matchesSearch && matchesCategory && matchesStatus && matchesPriority && matchesAgent;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = filtered.map(issue => `
+                <tr class="transition group hover:bg-cyber-cyan/5 cursor-pointer" onclick="openDetailModal('${issue.id}')">
+                    <td class="px-4 py-3 whitespace-nowrap text-xs text-cyber-gray font-mono">${issue.id}</td>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-rajdhani font-semibold text-cyber-white group-hover:text-cyber-cyan transition">${escapeHtml(issue.title)}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-orbitron rounded-sm ${getCategoryClass(issue.category)}">${issue.category.toUpperCase()}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-orbitron rounded-sm ${getStatusClass(issue.status)}">${issue.status.toUpperCase()}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="text-xs font-orbitron font-bold ${getPriorityClass(issue.priority)}">${issue.priority}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-xs">
+                        ${issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : '<span class="text-cyber-border">-</span>'}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-xs text-cyber-gray font-mono">
+                        ${issue.sprintId ? getSprintName(issue.sprintId) : '-'}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-xs font-medium">
+                        <button onclick="event.stopPropagation(); editIssue('${issue.id}')" class="text-cyber-cyan hover:text-cyber-white transition mr-3">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteIssue('${issue.id}')" class="text-cyber-red hover:text-cyber-magenta transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAgentBadge(agentName) {
+            const agent = agents.find(a => a.name === agentName);
+            const color = agent ? agent.color : '#6b7280';
+            const icon = agent ? agent.icon : 'fa-robot';
+            return `<span class="agent-badge" style="border: 1px solid ${color}; color: ${color}; background: ${color}20;">
+                <i class="fas ${icon}"></i>${agentName.replace(' Agent', '')}
+            </span>`;
+        }
+
+        function getSprintName(id) {
+            const sprint = sprints.find(s => s.id === id);
+            return sprint ? sprint.name : id;
+        }
+
+        function getCategoryClass(category) {
+            const classes = {
+                'Feature': 'badge-feature', 'Bug': 'badge-bug',
+                'Security': 'badge-security', 'Sprint': 'badge-sprint'
+            };
+            return classes[category] || 'bg-cyber-border text-cyber-gray border-cyber-gray';
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'Open': 'status-open', 'In Progress': 'status-progress',
+                'Ready for QA': 'status-ready-qa', 'In QA Review': 'status-qa',
+                'Reopened': 'status-reopened', 'Closed': 'status-closed',
+                'Blocked': 'status-blocked'
+            };
+            return classes[status] || 'bg-cyber-border text-cyber-gray border-cyber-gray';
+        }
+
+        function getPriorityClass(priority) {
+            const classes = { 'P0': 'priority-p0', 'P1': 'priority-p1', 'P2': 'priority-p2', 'P3': 'priority-p3' };
+            return classes[priority] || 'text-cyber-gray';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // View Switching
+        function showView(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`${view}-view`).classList.remove('hidden');
+            
+            document.querySelectorAll('#btn-issues, #btn-sprints, #btn-board').forEach(btn => {
+                btn.classList.remove('bg-cyber-cyan', 'text-cyber-bg');
+                btn.classList.add('bg-transparent', 'border', 'border-cyber-cyan', 'text-cyber-cyan');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${view}`);
+            activeBtn.classList.remove('bg-transparent', 'border', 'border-cyber-cyan', 'text-cyber-cyan');
+            activeBtn.classList.add('bg-cyber-cyan', 'text-cyber-bg');
+            
+            if (view === 'board') loadKanbanBoard();
+        }
+
+        // Issue Modal
+        function openModal() {
+            document.getElementById('issue-form').reset();
+            document.getElementById('issue-id').value = '';
+            document.getElementById('modal-title').textContent = 'NEW ISSUE';
+            document.getElementById('issue-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('issue-modal').classList.add('hidden');
+        }
+
+        function openEditModal(issue) {
+            if (!issue) return;
+            document.getElementById('issue-id').value = issue.id;
+            document.getElementById('title').value = issue.title;
+            document.getElementById('description').value = issue.description || '';
+            document.getElementById('category').value = issue.category;
+            document.getElementById('status').value = issue.status;
+            document.getElementById('priority').value = issue.priority;
+            document.getElementById('sprint-select').value = issue.sprintId || '';
+            document.getElementById('modal-title').textContent = 'EDIT ISSUE';
+            document.getElementById('issue-modal').classList.remove('hidden');
+        }
+
+        function editIssue(id) {
+            const issue = issues.find(i => i.id === id);
+            openEditModal(issue);
+        }
+
+        document.getElementById('issue-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('issue-id').value;
+            const data = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                status: document.getElementById('status').value,
+                priority: document.getElementById('priority').value,
+                sprintId: document.getElementById('sprint-select').value || null
+            };
+            
+            try {
+                if (id) {
+                    await fetch(`/api/issues/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    await fetch('/api/issues', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                closeModal();
+                loadIssues();
+            } catch (error) {
+                alert('Failed to save issue');
+            }
+        });
+
+        async function deleteIssue(id) {
+            if (!confirm('Delete this issue?')) return;
+            try {
+                await fetch(`/api/issues/${id}`, { method: 'DELETE' });
+                loadIssues();
+            } catch (error) {
+                alert('Failed to delete issue');
+            }
+        }
+
+        // Detail Modal
+        function openDetailModal(id) {
+            const issue = issues.find(i => i.id === id);
+            if (!issue) return;
+            currentIssue = issue;
+            
+            document.getElementById('detail-id').textContent = issue.id;
+            document.getElementById('detail-title').textContent = issue.title;
+            document.getElementById('detail-status').innerHTML = 
+                `<span class="px-3 py-1 text-xs font-orbitron rounded-sm ${getStatusClass(issue.status)}">${issue.status.toUpperCase()}</span>`;
+            document.getElementById('detail-category').innerHTML = 
+                `<span class="px-3 py-1 text-xs font-orbitron rounded-sm ${getCategoryClass(issue.category)}">${issue.category.toUpperCase()}</span>`;
+            document.getElementById('detail-priority').innerHTML = 
+                `<span class="text-sm font-orbitron font-bold ${getPriorityClass(issue.priority)}">${issue.priority}</span>`;
+            document.getElementById('detail-agent').innerHTML = issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : '-';
+            document.getElementById('detail-description').textContent = issue.description || 'No description provided.';
+            
+            renderWorkflowActions(issue);
+            renderComments(issue);
+            renderActivityLog(issue);
+            renderWorkflowVisualization();
+            
+            showTab('comments');
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            currentIssue = null;
+        }
+
+        function renderWorkflowActions(issue) {
+            const container = document.getElementById('action-buttons');
+            const actions = [];
+            
+            if (issue.status === 'In Progress') {
+                actions.push(`<button onclick="markReadyForQA('${issue.id}')" class="btn-cyber bg-cyber-magenta text-cyber-bg font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-check mr-1"></i>Mark Ready for QA
+                </button>`);
+            }
+            
+            if (issue.status === 'Ready for QA') {
+                actions.push(`<button onclick="startQA('${issue.id}')" class="btn-cyber bg-cyber-purple text-white font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-play mr-1"></i>Start QA Review
+                </button>`);
+            }
+            
+            if (issue.status === 'In QA Review') {
+                actions.push(`<button onclick="qaPass('${issue.id}')" class="btn-cyber bg-cyber-green text-cyber-bg font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-check-circle mr-1"></i>QA Pass
+                </button>`);
+                actions.push(`<button onclick="qaFail('${issue.id}')" class="btn-cyber bg-cyber-red text-white font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-times-circle mr-1"></i>QA Fail
+                </button>`);
+            }
+            
+            if (issue.category === 'Feature' && issue.status === 'In Review') {
+                actions.push(`<button onclick="approveFeature('${issue.id}')" class="btn-cyber bg-cyber-green text-cyber-bg font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-thumbs-up mr-1"></i>Approve Feature
+                </button>`);
+            }
+            
+            if (issue.status === 'Reopened') {
+                actions.push(`<button onclick="moveToProgress('${issue.id}')" class="btn-cyber bg-cyber-cyan text-cyber-bg font-orbitron px-3 py-2 text-xs">
+                    <i class="fas fa-redo mr-1"></i>Move to In Progress
+                </button>`);
+            }
+            
+            container.innerHTML = actions.length ? actions.join('') : 
+                '<span class="text-cyber-gray text-xs">No workflow actions available</span>';
+        }
+
+        function renderComments(issue) {
+            const container = document.getElementById('comments-list');
+            if (!issue.comments || issue.comments.length === 0) {
+                container.innerHTML = '<p class="text-cyber-gray text-sm italic">No comments yet</p>';
+                return;
+            }
+            
+            container.innerHTML = issue.comments.map(comment => {
+                const isSystem = comment.author === 'System';
+                const isQA = comment.author === 'QA Agent';
+                const borderColor = isSystem ? '#d400d4' : isQA ? '#9d00ff' : '#00c8d4';
+                const icon = isSystem ? 'fa-robot' : isQA ? 'fa-check-double' : 'fa-user';
+                
+                return `
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs" 
+                             style="border: 1px solid ${borderColor}; color: ${borderColor}; background: ${borderColor}20;">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="flex-1 comment-bubble" style="border-color: ${borderColor}40;">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-rajdhani font-semibold text-sm" style="color: ${borderColor};">${comment.author}</span>
+                                <span class="text-xs text-cyber-gray font-mono">${formatDateTime(comment.timestamp)}</span>
+                            </div>
+                            <p class="text-cyber-white text-sm font-rajdhani">${escapeHtml(comment.message)}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderActivityLog(issue) {
+            const container = document.getElementById('activity-list');
+            if (!issue.activityLog || issue.activityLog.length === 0) {
+                container.innerHTML = '<p class="text-cyber-gray text-sm italic">No activity recorded</p>';
+                return;
+            }
+            
+            container.innerHTML = issue.activityLog.map((log, index) => {
+                const isLast = index === issue.activityLog.length - 1;
+                const color = getActivityColor(log.action);
+                
+                return `
+                    <div class="timeline-item pb-4 ${isLast ? '' : ''}">
+                        <div class="timeline-dot" style="border-color: ${color};"></div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-orbitron text-xs font-bold" style="color: ${color};">${log.action}</span>
+                            <span class="text-xs text-cyber-gray font-mono">${formatDateTime(log.timestamp)}</span>
+                        </div>
+                        <div class="text-sm text-cyber-white font-rajdhani">
+                            ${log.details || ''}
+                            ${log.from && log.to ? `<span class="text-cyber-gray"> ${log.from} → ${log.to}</span>` : ''}
+                            ${log.resolution ? `<div class="mt-1 text-cyber-green text-xs">Resolution: ${escapeHtml(log.resolution)}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getActivityColor(action) {
+            const colors = {
+                'Created': '#00c8d4', 'Auto-Assigned': '#d400d4', 'QA Assigned': '#9d00ff',
+                'Sprint Assignment': '#c8c400', 'Status Changed': '#ff6600', 'QA Complete': '#00ff88',
+                'Reassigned': '#ff0040'
+            };
+            return colors[action] || '#6b7280';
+        }
+
+        function renderWorkflowVisualization() {
+            const container = document.getElementById('workflow-visualization');
+            const workflow = ['Open', 'In Progress', 'Ready for QA', 'In QA Review', 'Closed'];
+            const currentStatus = currentIssue ? currentIssue.status : 'Open';
+            
+            container.innerHTML = workflow.map((status, index) => {
+                const isActive = status === currentStatus;
+                const isPast = workflow.indexOf(currentStatus) > index;
+                const bgColor = isActive ? '#00c8d4' : isPast ? '#00ff88' : '#2a2a3a';
+                const textColor = isActive || isPast ? '#0a0a0f' : '#6b7280';
+                
+                const html = `
+                    <div class="px-3 py-2 rounded-sm font-orbitron text-xs" 
+                         style="background: ${bgColor}; color: ${textColor};">
+                        ${status}
+                    </div>
+                `;
+                
+                if (index < workflow.length - 1) {
+                    return html + `<i class="fas fa-arrow-right text-cyber-gray"></i>`;
+                }
+                return html;
+            }).join('');
+        }
+
+        // Tab Switching
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-cyber-gray');
+            });
+            
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+            document.getElementById(`tab-${tab}`).classList.remove('text-cyber-gray');
+            currentTab = tab;
+        }
+
+        // Workflow Actions
+        async function markReadyForQA(id) {
+            const message = prompt('Add completion comment (optional):');
+            try {
+                await fetch(`/api/issues/${id}/ready-for-qa`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agent: 'Developer Agent', message })
+                });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to mark ready for QA');
+            }
+        }
+
+        async function startQA(id) {
+            try {
+                await fetch(`/api/issues/${id}/start-qa`, { method: 'POST' });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to start QA');
+            }
+        }
+
+        async function qaPass(id) {
+            const message = prompt('QA verification comment:');
+            try {
+                await fetch(`/api/issues/${id}/qa-pass`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to complete QA pass');
+            }
+        }
+
+        async function qaFail(id) {
+            const message = prompt('QA failure findings:');
+            try {
+                await fetch(`/api/issues/${id}/qa-fail`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, findings: message })
+                });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to process QA fail');
+            }
+        }
+
+        async function approveFeature(id) {
+            try {
+                await fetch(`/api/issues/${id}/approve`, { method: 'POST' });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to approve feature');
+            }
+        }
+
+        async function moveToProgress(id) {
+            try {
+                await fetch(`/api/issues/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'In Progress' })
+                });
+                await loadIssues();
+                openDetailModal(id);
+            } catch (error) {
+                alert('Failed to update status');
+            }
+        }
+
+        // Comments
+        async function addComment() {
+            if (!currentIssue) return;
+            const message = document.getElementById('new-comment').value.trim();
+            const author = document.getElementById('comment-author').value;
+            
+            if (!message) return;
+            
+            try {
+                await fetch(`/api/issues/${currentIssue.id}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ author, message })
+                });
+                document.getElementById('new-comment').value = '';
+                await loadIssues();
+                openDetailModal(currentIssue.id);
+            } catch (error) {
+                alert('Failed to add comment');
+            }
+        }
+
+        // Sprints
+        function renderSprints() {
+            const container = document.getElementById('sprints-list');
+            if (sprints.length === 0) {
+                container.innerHTML = '<p class="text-cyber-gray text-center py-8">No sprints created yet</p>';
+                return;
+            }
+            
+            container.innerHTML = sprints.map(sprint => {
+                const statusClass = sprint.status === 'Active' ? 'status-indicator active' : 
+                                   sprint.status === 'Planned' ? 'status-indicator.planned' : 'status-indicator.completed';
+                const statusColor = sprint.status === 'Active' ? '#00ff88' : 
+                                 sprint.status === 'Planned' ? '#c8c400' : '#6b7280';
+                
+                return `
+                    <div class="panel-cyber p-4 cursor-pointer hover:border-cyber-cyan transition" onclick="viewSprint('${sprint.id}')">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-orbitron text-cyber-cyan">${sprint.name}</h3>
+                            <span class="status-indicator" style="background: ${statusColor};"></span>
+                        </div>
+                        <p class="text-cyber-gray text-sm font-rajdhani mb-2">${sprint.goals}</p>
+                        <div class="flex items-center gap-4 text-xs font-mono text-cyber-gray">
+                            <span><i class="fas fa-calendar mr-1"></i>${formatDate(sprint.startDate)} - ${formatDate(sprint.endDate)}</span>
+                            <span><i class="fas fa-tasks mr-1"></i>${sprint.issueIds.length} issues</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openSprintModal() {
+            document.getElementById('sprint-form').reset();
+            document.getElementById('sprint-modal').classList.remove('hidden');
+        }
+
+        function closeSprintModal() {
+            document.getElementById('sprint-modal').classList.add('hidden');
+        }
+
+        document.getElementById('sprint-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('sprint-name').value,
+                startDate: document.getElementById('sprint-start').value,
+                endDate: document.getElementById('sprint-end').value,
+                goals: document.getElementById('sprint-goals').value
+            };
+            
+            try {
+                await fetch('/api/sprints', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                closeSprintModal();
+                await loadSprints();
+            } catch (error) {
+                alert('Failed to create sprint');
+            }
+        });
+
+        async function viewSprint(id) {
+            // Could implement sprint detail view
+            showView('board');
+            document.getElementById('board-sprint-select').value = id;
+            loadKanbanBoard();
+        }
+
+        // Kanban Board
+        function loadKanbanBoard() {
+            const sprintId = document.getElementById('board-sprint-select').value;
+            const sprint = sprintId ? sprints.find(s => s.id === sprintId) : null;
+            
+            document.getElementById('board-sprint-name').textContent = sprint ? sprint.name : 'All Issues';
+            
+            const columns = {
+                todo: issues.filter(i => i.status === 'Open' && (!sprintId || i.sprintId === sprintId)),
+                progress: issues.filter(i => i.status === 'In Progress' && (!sprintId || i.sprintId === sprintId)),
+                readyQA: issues.filter(i => i.status === 'Ready for QA' && (!sprintId || i.sprintId === sprintId)),
+                inQA: issues.filter(i => i.status === 'In QA Review' && (!sprintId || i.sprintId === sprintId)),
+                done: issues.filter(i => i.status === 'Closed' && (!sprintId || i.sprintId === sprintId))
+            };
+            
+            document.getElementById('count-todo').textContent = columns.todo.length;
+            document.getElementById('count-progress').textContent = columns.progress.length;
+            document.getElementById('count-ready-qa').textContent = columns.readyQA.length;
+            document.getElementById('count-in-qa').textContent = columns.inQA.length;
+            document.getElementById('count-done').textContent = columns.done.length;
+            
+            Object.keys(columns).forEach(key => {
+                const container = document.getElementById(`kanban-${key}`);
+                if (columns[key].length === 0) {
+                    container.innerHTML = '<p class="text-cyber-gray text-xs text-center italic py-4">No items</p>';
+                } else {
+                    container.innerHTML = columns[key].map(issue => `
+                        <div class="kanban-card panel-cyber p-3 border-l-2 ${getBorderColor(issue.status)}" onclick="openDetailModal('${issue.id}')">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="text-xs font-mono text-cyber-gray">${issue.id}</span>
+                                <span class="text-xs font-orbitron ${getPriorityClass(issue.priority)}">${issue.priority}</span>
+                            </div>
+                            <h4 class="text-sm font-rajdhani font-semibold text-cyber-white mb-2 line-clamp-2">${escapeHtml(issue.title)}</h4>
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 text-xs rounded-sm ${getCategoryClass(issue.category)}">${issue.category}</span>
+                                ${issue.assignedAgent ? renderAgentBadge(issue.assignedAgent) : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            });
+        }
+
+        function getBorderColor(status) {
+            const colors = {
+                'Open': 'border-cyber-yellow', 'In Progress': 'border-cyber-cyan',
+                'Ready for QA': 'border-cyber-magenta', 'In QA Review': 'border-cyber-purple',
+                'Closed': 'border-cyber-green', 'Reopened': 'border-cyber-orange'
+            };
+            return colors[status] || 'border-cyber-gray';
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                currentFilter.search = e.target.value.toLowerCase();
+                renderIssues();
+            });
+            document.getElementById('filter-category').addEventListener('change', (e) => {
+                currentFilter.category = e.target.value;
+                renderIssues();
+            });
+            document.getElementById('filter-status').addEventListener('change', (e) => {
+                currentFilter.status = e.target.value;
+                renderIssues();
+            });
+            document.getElementById('filter-priority').addEventListener('change', (e) => {
+                currentFilter.priority = e.target.value;
+                renderIssues();
+            });
+            document.getElementById('filter-agent').addEventListener('change', (e) => {
+                currentFilter.agent = e.target.value;
+                renderIssues();
+            });
+            
+            // Close modals on backdrop click
+            document.getElementById('issue-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+            document.getElementById('detail-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeDetailModal();
+            });
+            document.getElementById('sprint-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeSprintModal();
+            });
+        }
+
+        // Utilities
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', { 
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+            });
+        }
+    </script>
+</body>
+</html>
