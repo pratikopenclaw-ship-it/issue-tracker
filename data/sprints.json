@@ -4,26 +4,152 @@
     "name": "Sprint 1 - Dashboard Core",
     "startDate": "2026-03-20",
     "endDate": "2026-04-03",
-    "status": "Active",
+    "status": "Closed",
     "goals": "Complete core dashboard features and fix critical bugs",
     "issueIds": [
       "BUG-001",
       "FET-001",
       "BUG-002",
-      "BUG-005",
-      "BUG-006"
+      "BUG-006",
+      "BUG-010"
     ]
   },
   {
     "id": "SPRINT-002",
-    "name": "Sprint 2 - Security & Performance",
+    "name": "Sprint 2 - Security & Performance + WebScout P1 Quick Wins",
     "startDate": "2026-04-07",
     "endDate": "2026-04-21",
-    "status": "Planned",
-    "goals": "Implement security hardening and optimize API performance",
+    "status": "Closed",
+    "goals": [
+      "Implement security hardening and optimize API performance",
+      "Close critical WebScout P1 feature gaps (Quick wins)",
+      "Trade from Charts, Multiple Watchlists, Real-time P&L",
+      "Chart 360, Import Watchlists (Excel)"
+    ],
     "issueIds": [
       "SI-001",
-      "BUG-003"
+      "BUG-003",
+      "FET-002",
+      "BUG-007",
+      "BUG-005",
+      "SI-002",
+      "FET-004",
+      "FET-007",
+      "FET-003",
+      "FET-005",
+      "FET-006",
+      "FET-008",
+      "FET-009",
+      "FET-011",
+      "FET-012",
+      "FET-022",
+      "FET-031",
+      "BUG-012"
+    ],
+    "completedAt": "2026-03-27T15:45:26.600480Z",
+    "completionNote": "Sprint 2 completed. All security and profile features delivered."
+  },
+  {
+    "id": "SPRINT-003",
+    "name": "Sprint 3 - Research & Analytics + WebScout Core Features",
+    "startDate": "2026-04-22",
+    "endDate": "2026-05-06",
+    "status": "Planned",
+    "goals": [
+      "Build research platform differentiation",
+      "Implement Custom Screeners and DVM Scores",
+      "Add Historical Data and Peer Comparison",
+      "SmartOptions F&O Dashboard and SWOT Analysis"
+    ],
+    "issueIds": [
+      "FET-010",
+      "FET-013",
+      "FET-014",
+      "FET-015",
+      "FET-016",
+      "FET-017",
+      "FET-018",
+      "FET-020",
+      "FET-021",
+      "FET-024",
+      "FET-026",
+      "FET-027"
     ]
+  },
+  {
+    "id": "SPRINT-004",
+    "name": "Sprint 4",
+    "startDate": "2026-03-31",
+    "endDate": "2026-04-30",
+    "status": "Planned",
+    "goals": "Add features suggested by Webscout and Product Manager and Validate by me (Client)",
+    "issueIds": []
+  },
+  {
+    "id": "SPRINT-006",
+    "name": "Sprint 6 - Portfolio Management & Technical Analysis (PM Review March 27)",
+    "startDate": "2026-03-27",
+    "endDate": "2026-04-10",
+    "status": "Active",
+    "goals": [
+      "Primary: Improve portfolio management with Multiple Watchlists",
+      "Secondary: Enhance technical analysis with Divergence Indicators and DVM Scores",
+      "Tertiary: Offer premium speed tier with Turbo Data"
+    ],
+    "issueIds": [
+      "FET-011",
+      "FET-016",
+      "FET-020",
+      "FET-021"
+    ],
+    "riceScoring": {
+      "sprintDate": "2026-03-27",
+      "reviewedBy": "Product Manager Agent",
+      "totalFETsReviewed": 15,
+      "selectedFETs": 4,
+      "sprintCapacity": "4.5 person-weeks",
+      "p1Count": 4,
+      "p2Deferred": [
+        "FET-013",
+        "FET-014",
+        "FET-015",
+        "FET-026",
+        "FET-027"
+      ],
+      "p3Backlog": [
+        "FET-017",
+        "FET-018",
+        "FET-023",
+        "FET-025",
+        "FET-029",
+        "FET-030"
+      ]
+    },
+    "assignments": {
+      "FET-011": {
+        "assignee": "Frontend Developer Agent",
+        "riceScore": 3.6,
+        "effortWeeks": 1,
+        "priority": "P1"
+      },
+      "FET-016": {
+        "assignee": "Fullstack Developer Agent",
+        "riceScore": 3.15,
+        "effortWeeks": 2,
+        "priority": "P1"
+      },
+      "FET-020": {
+        "assignee": "Backend Developer Agent",
+        "riceScore": 3.6,
+        "effortWeeks": 0.5,
+        "priority": "P1"
+      },
+      "FET-021": {
+        "assignee": "Frontend Developer Agent",
+        "riceScore": 3.6,
+        "effortWeeks": 1,
+        "priority": "P1"
+      }
+    }
   }
 ]

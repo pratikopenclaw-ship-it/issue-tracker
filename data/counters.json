@@ -1,6 +1,7 @@
 {
-  "FET": 1,
-  "BUG": 6,
-  "SI": 1,
-  "SPRINT": 1
+  "FET": 31,
+  "BUG": 13,
+  "SI": 12,
+  "SPRINT": 3,
+  "ISS": 3
 }

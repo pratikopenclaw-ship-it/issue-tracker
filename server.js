@@ -1451,9 +1451,10 @@ app.delete('/api/sprints/:sprintId/issues/:issueId', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Issue Tracker server running on port ${PORT}`);
     console.log(`Open http://localhost:${PORT} in your browser`);
+    console.log(`Network access: http://0.0.0.0:${PORT}`);
     console.log('Initializing data file if needed...');
     ensureDataFile();
     console.log('✅ Agile Workflow Engine initialized');

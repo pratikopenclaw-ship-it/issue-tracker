@@ -224,8 +224,10 @@
         /* Panel */
         .panel {
             flex: 1;
-            overflow: auto;
-            padding: 16px;
+            overflow: hidden;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-header {
@@ -322,19 +324,26 @@
             color: var(--text-primary);
         }
 
-        /* Kanban Board */
-        .kanban-container {
-            display: flex;
+        /* Kanban Board - Full Screen Flexible Layout */
+        .kanban-board {
+            height: calc(100vh - 200px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            min-height: 400px;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .kanban-container {
+            display: contents;
         }
 
         .kanban-column {
             min-width: 280px;
-            max-width: 280px;
-            flex-shrink: 0;
+            max-width: 400px;
+            height: calc(100vh - 220px);
+            max-height: calc(100vh - 220px);
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             background: var(--bg-secondary);
@@ -348,6 +357,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .kanban-title {
@@ -368,47 +378,73 @@
             border-radius: 10px;
         }
 
-        .kanban-content {
+        .kanban-column-content {
             flex: 1;
             padding: 8px;
             overflow-y: auto;
-            max-height: 500px;
+            min-height: 0;
         }
 
-        /* Kanban Cards */
+        /* More items indicator */
+        .more-items-indicator {
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 150ms ease;
+            flex-shrink: 0;
+        }
+
+        .more-items-indicator:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-cyan);
+        }
+
+        /* Kanban Cards - Compact Layout */
         .kanban-card {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 4px;
-            padding: 12px;
-            margin-bottom: 8px;
+            padding: 10px;
+            margin-bottom: 6px;
             cursor: pointer;
             transition: all 150ms ease;
+            min-height: 60px;
+            height: auto;
+        }
+
+        /* Cards beyond 20 are slightly dimmed */
+        .kanban-card:nth-child(n+21) {
+            opacity: 0.85;
         }
 
         .kanban-card:hover {
             border-color: var(--accent-purple);
             background: var(--bg-secondary);
+            opacity: 1;
         }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .card-id {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--accent-purple);
         }
 
         .card-priority {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 10px;
+            padding: 1px 6px;
+            border-radius: 8px;
             font-family: 'JetBrains Mono', monospace;
         }
 
@@ -433,11 +469,11 @@
         }
 
         .card-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--text-primary);
-            line-height: 1.4;
-            margin-bottom: 12px;
+            line-height: 1.35;
+            margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -451,9 +487,9 @@
         }
 
         .card-category {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 4px;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
             border: 1px solid var(--border-color);
             background: var(--bg-secondary);
         }
@@ -463,13 +499,55 @@
         .card-category.security { color: #ff00ff; border-color: #ff00ff; }
         .card-category.sprint { color: var(--priority-p2-text); border-color: var(--priority-p2-text); }
 
+        /* Detail Tabs */
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .detail-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all 150ms ease;
+            user-select: none;
+        }
+
+        .detail-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-tab.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+            background: rgba(3, 218, 198, 0.05);
+        }
+
+        /* Activity Log */
+        .activity-log-list {
+            background: var(--bg-primary);
+            padding: 12px;
+            border-radius: 4px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none !important;
+        }
+
         .card-agent {
-            font-size: 10px;
+            font-size: 9px;
             font-family: 'JetBrains Mono', monospace;
             color: var(--text-secondary);
             background: var(--bg-primary);
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 2px 6px;
+            border-radius: 3px;
         }
 
         /* Table */
@@ -551,6 +629,9 @@
         .badge-status-qa { background: #3a1a4a; color: var(--accent-purple); }
         .badge-status-closed { background: var(--priority-p3-bg); color: var(--priority-p3-text); }
         .badge-status-reopened { background: var(--priority-p0-bg); color: var(--priority-p0-text); }
+        .badge-status-in-review { background: #4a3d1a; color: #ffaa00; }
+        .badge-status-approved { background: #1a4a2e; color: #44ff88; }
+        .badge-status-rejected { background: #4a1a1a; color: #ff4444; }
 
         /* Modals */
         .modal-backdrop {
@@ -699,6 +780,11 @@
             padding: 12px;
         }
 
+        .meta-item.editable {
+            border-color: var(--accent-purple);
+            background: var(--bg-primary);
+        }
+
         .meta-label {
             font-size: 10px;
             text-transform: uppercase;
@@ -710,6 +796,65 @@
         .meta-value {
             font-size: 13px;
             font-weight: 500;
+        }
+
+        /* Edit Mode Styles */
+        .edit-mode-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--accent-purple);
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background: rgba(187, 134, 252, 0.1);
+            border: 1px solid var(--accent-purple);
+            border-radius: 4px;
+        }
+
+        .edit-mode-indicator .client-badge {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .editable-field {
+            border: 1px solid var(--accent-purple) !important;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .editable-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3);
+        }
+
+        .editable-textarea {
+            border: 1px solid var(--accent-purple) !important;
+            border-radius: 4px;
+            padding: 12px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.6;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .editable-textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3);
+        }
+
+        .detail-title-input {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+            margin-bottom: 6px;
         }
 
         /* Code Preview */
@@ -758,6 +903,139 @@
             white-space: pre;
         }
 
+        /* Temporarily hidden - Code Preview widget in issue detail view */
+        #code-preview-section {
+            display: none !important;
+        }
+
+        /* Explorer Resizer */
+        .explorer-resizer {
+            width: 4px;
+            cursor: col-resize;
+            background: transparent;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+            transition: background 150ms ease;
+        }
+
+        .explorer-resizer:hover,
+        .explorer-resizer.resizing {
+            background: var(--accent-purple);
+        }
+
+        /* Keyboard Shortcuts Modal */
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .shortcut-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-primary);
+            min-width: 24px;
+        }
+
+        /* Search Modal */
+        .search-modal .modal {
+            max-width: 600px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+        }
+
+        .search-results {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 150ms ease;
+        }
+
+        .search-result-item:hover,
+        .search-result-item.selected {
+            background: var(--bg-primary);
+        }
+
+        .search-result-item .result-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-purple);
+            margin-right: 12px;
+            min-width: 70px;
+        }
+
+        .search-result-item .result-title {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .search-result-item .result-category {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Tree item selected state for keyboard navigation */
+        .tree-item.keyboard-selected {
+            background: var(--accent-purple);
+            color: var(--bg-primary);
+        }
+
+        .tree-item.keyboard-selected .issue-id {
+            color: var(--bg-primary);
+        }
+
         /* Comments */
         .comment-list {
             margin-bottom: 16px;
@@ -787,6 +1065,58 @@
             flex-shrink: 0;
         }
 
+        /* Client comment styling */
+        .comment-client {
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            margin: 8px 0;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .comment-client .comment-avatar {
+            background: #FFD700;
+            color: #1a1a1a;
+        }
+
+        .comment-client .comment-author {
+            color: #FFD700;
+        }
+
+        .comment-client .comment-text {
+            color: var(--text-primary);
+        }
+
+        /* Agent comment styling */
+        .comment-agent {
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 9px;
+        }
+
+        .comment-agent .comment-avatar {
+            background: var(--accent-cyan);
+            color: #1a1a1a;
+        }
+
+        .comment-agent .comment-author {
+            color: var(--accent-cyan);
+        }
+
+        /* System comment styling */
+        .comment-system {
+            border-left: 3px solid var(--accent-purple);
+            padding-left: 9px;
+            background: rgba(187, 134, 252, 0.05);
+        }
+
+        .comment-system .comment-avatar {
+            background: var(--accent-purple);
+            color: #1a1a1a;
+        }
+
+        .comment-system .comment-author {
+            color: var(--accent-purple);
+        }
+
         .comment-content {
             flex: 1;
         }
@@ -803,6 +1133,14 @@
             font-size: 13px;
         }
 
+        .comment-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
         .comment-time {
             font-size: 11px;
             color: var(--text-muted);
@@ -812,6 +1150,20 @@
             font-size: 13px;
             color: var(--text-primary);
             line-height: 1.5;
+        }
+
+        /* Comment form - Client indicator */
+        .commenting-as {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .commenting-as .client-badge {
+            color: #FFD700;
+            font-weight: 600;
         }
 
         /* Filters */
@@ -919,6 +1271,9 @@
         .status-qa { background: var(--accent-purple); }
         .status-closed { background: var(--priority-p3-text); }
         .status-reopened { background: var(--priority-p0-text); }
+        .status-in-review { background: #ffaa00; }
+        .status-approved { background: #44ff88; }
+        .status-rejected { background: #ff4444; }
     </style>
 </head>
 <body class="h-screen flex">
@@ -963,7 +1318,8 @@
     </nav>
 
     <!-- Sidebar (Issue Explorer) -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" style="position: relative;">
+        <div class="explorer-resizer" id="explorer-resizer"></div>
         <div class="sidebar-header">Explorer</div>
         <div class="flex-1 overflow-auto">
             <!-- Bugs Section -->
@@ -1127,10 +1483,8 @@
             </div>
 
             <!-- Kanban Board -->
-            <div id="kanban-view">
-                <div class="kanban-container" id="kanban-board">
-                    <!-- Columns will be populated by JS -->
-                </div>
+            <div id="kanban-view" class="kanban-board">
+                <div class="kanban-container" id="kanban-board"></div>
             </div>
 
             <!-- List View -->
@@ -1208,10 +1562,13 @@
                             <label class="form-label">Status</label>
                             <select class="form-select" id="issue-status">
                                 <option value="Open">Open</option>
+                                <option value="In Review">In Review</option>
+                                <option value="Approved">Approved</option>
                                 <option value="In Progress">In Progress</option>
                                 <option value="Ready for QA">Ready for QA</option>
                                 <option value="In QA Review">In QA Review</option>
                                 <option value="Closed">Closed</option>
+                                <option value="Rejected">Rejected</option>
                                 <option value="Reopened">Reopened</option>
                             </select>
                         </div>
@@ -1258,45 +1615,352 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="detail-meta" id="detail-meta"></div>
-                <div class="mb-6">
-                    <label class="form-label">Description</label>
-                    <div id="detail-description" style="background:var(--bg-primary);padding:12px;border-radius:4px;font-size:13px;line-height:1.6;min-height:60px"></div>
+                <!-- Edit Mode Indicator -->
+                <div id="edit-mode-indicator" class="edit-mode-indicator" style="display:none;">
+                    <span>✏️</span>
+                    <span>Editing as: <span class="client-badge">Client</span></span>
                 </div>
-                <div class="mb-6" id="code-preview-section">
-                    <label class="form-label">Code Preview</label>
-                    <div class="code-preview">
-                        <div class="code-header">
-                            <span class="code-lang">javascript</span>
-                        </div>
-                        <div class="code-content">
-                            <div class="code-lines">1<br>2<br>3<br>4<br>5<br>6</div>
-                            <div class="code-text">// Reproduction steps:
+                <div class="detail-meta" id="detail-meta"></div>
+                
+                <!-- Detail Tabs -->
+                <div class="detail-tabs" style="display:flex;border-bottom:1px solid var(--border-color);margin-bottom:16px;">
+                    <div class="detail-tab active" data-tab="overview" onclick="switchDetailTab('overview')">Overview</div>
+                    <div class="detail-tab" data-tab="history" onclick="switchDetailTab('history')">History</div>
+                    <div class="detail-tab" data-tab="all" onclick="switchDetailTab('all')">All</div>
+                </div>
+                
+                <!-- Overview Tab -->
+                <div id="tab-overview" class="tab-content">
+                    <div class="mb-6">
+                        <label class="form-label">Description</label>
+                        <div id="detail-description" style="background:var(--bg-primary);padding:12px;border-radius:4px;font-size:13px;line-height:1.6;min-height:60px"></div>
+                    </div>
+                    <div class="mb-6" id="code-preview-section">
+                        <label class="form-label">Code Preview</label>
+                        <div class="code-preview">
+                            <div class="code-header">
+                                <span class="code-lang">javascript</span>
+                            </div>
+                            <div class="code-content">
+                                <div class="code-lines">1<br>2<br>3<br>4<br>5<br>6</div>
+                                <div class="code-text">// Reproduction steps:
 function reproduceBug() {
     const data = fetchData();
     if (!data) throw new Error('Data missing');
     return process(data);
 }</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">Comments</label>
+                        <div class="comment-list" id="detail-comments"></div>
+                        <div class="mt-4">
+                            <div class="commenting-as mb-2">
+                                <span>👤</span>
+                                <span>Commenting as: <span class="client-badge">Client</span></span>
+                                <input type="hidden" id="comment-author" value="Client">
+                            </div>
+                            <div class="flex gap-2">
+                                <textarea class="form-textarea" id="new-comment" placeholder="Add a comment..." rows="2" style="flex:1"></textarea>
+                                <button class="btn btn-primary" onclick="addComment()">Add</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <label class="form-label">Comments</label>
-                    <div class="comment-list" id="detail-comments"></div>
-                    <div class="flex gap-2 mt-4">
-                        <input type="text" class="form-input" id="new-comment" placeholder="Add a comment...">
-                        <select class="form-select" id="comment-author" style="width:150px">
-                            <option>Developer</option>
-                            <option>QA Agent</option>
-                            <option>System</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="addComment()">Add</button>
+                
+                <!-- History Tab -->
+                <div id="tab-history" class="tab-content" style="display:none;">
+                    <label class="form-label">Activity Log</label>
+                    <div class="activity-log-list" id="detail-activity-log" style="background:var(--bg-primary);padding:12px;border-radius:4px;min-height:200px;max-height:400px;overflow-y:auto;">
+                        <!-- Activity log items will be inserted here -->
+                    </div>
+                </div>
+                
+                <!-- All Tab -->
+                <div id="tab-all" class="tab-content" style="display:none;">
+                    <div class="mb-6">
+                        <label class="form-label">Description</label>
+                        <div id="detail-description-all" style="background:var(--bg-primary);padding:12px;border-radius:4px;font-size:13px;line-height:1.6;min-height:60px"></div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="form-label">Activity Log</label>
+                        <div class="activity-log-list" id="detail-activity-log-all" style="background:var(--bg-primary);padding:12px;border-radius:4px;margin-bottom:16px;max-height:200px;overflow-y:auto;"></div>
+                    </div>
+                    <div>
+                        <label class="form-label">Comments</label>
+                        <div class="comment-list" id="detail-comments-all"></div>
+                        <div class="mt-4">
+                            <div class="commenting-as mb-2">
+                                <span>👤</span>
+                                <span>Commenting as: <span class="client-badge">Client</span></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="closeDetailModal()">Close</button>
-                <button class="btn btn-primary" onclick="editCurrentIssue()">Edit</button>
+                
+                <!-- Feature Action Buttons (only shown for Features with Open or In Review status) -->
+                <div id="feature-actions" style="display:none; gap: 10px;">
+                    <button class="btn" id="send-review-btn" onclick="sendFeatureForReview()" style="background: var(--priority-p2-bg); color: var(--priority-p2-text); border-color: var(--priority-p2-text);">
+                        📋 Send for Review
+                    </button>
+                    <button class="btn" onclick="openFeatureRejectModal()" style="background: var(--priority-p0-bg); color: var(--priority-p0-text); border-color: var(--priority-p0-text);">
+                        ❌ Reject
+                    </button>
+                    <button class="btn" onclick="openFeatureApproveModal()" style="background: var(--priority-p3-bg); color: var(--priority-p3-text); border-color: var(--priority-p3-text);">
+                        ✅ Approve
+                    </button>
+                </div>
+                
+                <!-- Developer Actions (shown for In Progress features) -->
+                <div id="developer-actions" style="display:none; gap: 10px;">
+                    <button class="btn" onclick="openArchitectModal()" style="background: rgba(187, 134, 252, 0.2); color: var(--accent-purple); border-color: var(--accent-purple);">
+                        🏗️ Architecture Plan
+                    </button>
+                    <button class="btn" onclick="markReadyForQA()" style="background: rgba(0, 200, 212, 0.2); color: var(--accent-cyan); border-color: var(--accent-cyan);">
+                        ✅ Mark Ready for QA
+                    </button>
+                </div>
+                
+                <!-- QA Actions (shown for Ready for QA and In QA Review) -->
+                <div id="qa-actions" style="display:none; gap: 10px;">
+                    <button class="btn" onclick="openQAModal()" style="background: rgba(0, 200, 212, 0.2); color: var(--accent-cyan); border-color: var(--accent-cyan);">
+                        🔍 QA Review
+                    </button>
+                </div>
+                
+                <!-- Technical Writer Actions (shown for Closed features) -->
+                <div id="writer-actions" style="display:none; gap: 10px;">
+                    <button class="btn" onclick="openWriterModal()" style="background: rgba(255, 215, 0, 0.2); color: #FFD700; border-color: #FFD700;">
+                        📝 Documentation
+                    </button>
+                </div>
+                
+                <button class="btn btn-primary" id="edit-issue-btn" onclick="enableEditMode()">Edit</button>
+                <button class="btn" id="cancel-edit-btn" onclick="cancelEditMode()" style="display:none;">Cancel</button>
+                <button class="btn btn-primary" id="save-edit-btn" onclick="saveEditMode()" style="display:none;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Approval/Rejection Modal -->
+    <div class="modal-backdrop hidden" id="feature-action-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title" id="feature-action-title">Feature Action</div>
+                <button class="modal-close" onclick="closeFeatureActionModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="feature-approve-section" style="display:none;">
+                    <p style="margin-bottom: 12px; color: var(--text-secondary);">This feature will be approved and moved to architecture planning.</p>
+                    <div class="form-group">
+                        <label class="form-label">Client Notes (Optional)</label>
+                        <textarea class="form-textarea" id="approve-notes" rows="3" placeholder="Add any notes for the Architecture Agent..."></textarea>
+                    </div>
+                </div>
+                <div id="feature-reject-section" style="display:none;">
+                    <p style="margin-bottom: 12px; color: var(--text-secondary);">This feature will be rejected and closed.</p>
+                    <div class="form-group">
+                        <label class="form-label">Rejection Reason <span style="color: var(--priority-p0-text);">*</span></label>
+                        <textarea class="form-textarea" id="reject-reason" rows="3" placeholder="Why is this feature being rejected?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="notify-stakeholders" checked style="width: 16px; height: 16px;">
+                            <span>Notify Product Manager and WebScout</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeFeatureActionModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirm-feature-action-btn" onclick="confirmFeatureAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Architecture Planning Modal -->
+    <div class="modal-backdrop hidden" id="architect-modal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <div class="modal-title">🏗️ Architecture Planning</div>
+                <button class="modal-close" onclick="closeArchitectModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4" style="background: rgba(187, 134, 252, 0.1); border: 1px solid var(--accent-purple); border-radius: 4px; padding: 12px;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-purple); margin-bottom: 4px;">Planning For</div>
+                    <div style="font-weight: 600;" id="architect-feature-title"></div>
+                    <div class="font-mono" style="font-size: 12px; color: var(--text-secondary);" id="architect-feature-id"></div>
+                </div>
+                <form id="architect-form">
+                    <div class="form-group">
+                        <label class="form-label">Technical Approach</label>
+                        <textarea class="form-textarea" id="architect-approach" rows="3" placeholder="Describe the technical approach, architecture patterns, and design decisions..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Files to Modify</label>
+                        <textarea class="form-textarea" id="architect-files" rows="2" placeholder="List files/components that need to be modified (one per line or comma separated)..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Acceptance Criteria</label>
+                        <textarea class="form-textarea" id="architect-criteria" rows="3" placeholder="Define clear acceptance criteria for QA verification..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Effort Estimate</label>
+                            <select class="form-select" id="architect-effort">
+                                <option value="Small">Small (1-2 days)</option>
+                                <option value="Medium" selected>Medium (3-5 days)</option>
+                                <option value="Large">Large (1-2 weeks)</option>
+                                <option value="XLarge">X-Large (2+ weeks)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Developer Type</label>
+                            <select class="form-select" id="architect-developer-type" onchange="updateDeveloperOptions()">
+                                <option value="Frontend">Frontend Developer</option>
+                                <option value="Backend">Backend Developer</option>
+                                <option value="FullStack">Full Stack Developer</option>
+                                <option value="Data">Data Team</option>
+                                <option value="Security">Security Developer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Assign to Agent</label>
+                        <select class="form-select" id="architect-assignee">
+                            <!-- Populated dynamically based on developer type -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-textarea" id="architect-notes" rows="2" placeholder="Any additional technical notes, dependencies, or considerations..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeArchitectModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitArchitecturePlan()" style="background: var(--accent-purple); border-color: var(--accent-purple);">
+                    Submit Plan & Assign Developer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QA Review Modal -->
+    <div class="modal-backdrop hidden" id="qa-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title">🔍 QA Verification</div>
+                <button class="modal-close" onclick="closeQAModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4" style="background: rgba(0, 200, 212, 0.1); border: 1px solid var(--accent-cyan); border-radius: 4px; padding: 12px;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--accent-cyan); margin-bottom: 4px;">QA Review For</div>
+                    <div style="font-weight: 600;" id="qa-feature-title"></div>
+                    <div class="font-mono" style="font-size: 12px; color: var(--text-secondary);" id="qa-feature-id"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Acceptance Criteria Verification</label>
+                    <div id="qa-criteria-list" style="background: var(--bg-primary); border-radius: 4px; padding: 12px; margin-bottom: 12px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Regression Testing Results</label>
+                    <select class="form-select" id="qa-regression">
+                        <option value="pass">✅ No regressions detected</option>
+                        <option value="minor">⚠️ Minor issues found</option>
+                        <option value="major">❌ Major regressions found</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">QA Report</label>
+                    <textarea class="form-textarea" id="qa-report" rows="4" placeholder="Enter detailed QA findings, test results, and recommendations..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Overall Result</label>
+                    <div style="display: flex; gap: 12px;">
+                        <label style="flex: 1; cursor: pointer; padding: 12px; border: 1px solid var(--border-color); border-radius: 4px; text-align: center; transition: all 150ms ease;" onmouseover="this.style.borderColor='var(--priority-p3-text)'" onmouseout="if(!document.getElementById('qa-pass').checked) this.style.borderColor='var(--border-color)'">
+                            <input type="radio" name="qa-result" id="qa-pass" value="pass" style="margin-right: 8px;">
+                            <span style="color: var(--priority-p3-text);">✅ PASS</span>
+                        </label>
+                        <label style="flex: 1; cursor: pointer; padding: 12px; border: 1px solid var(--border-color); border-radius: 4px; text-align: center; transition: all 150ms ease;" onmouseover="this.style.borderColor='var(--priority-p0-text)'" onmouseout="if(!document.getElementById('qa-fail').checked) this.style.borderColor='var(--border-color)'">
+                            <input type="radio" name="qa-result" id="qa-fail" value="fail" style="margin-right: 8px;">
+                            <span style="color: var(--priority-p0-text);">❌ FAIL</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeQAModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitQAReview()" style="background: var(--accent-cyan); border-color: var(--accent-cyan); color: var(--bg-primary);">
+                    Submit QA Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Writer Modal -->
+    <div class="modal-backdrop hidden" id="writer-modal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title">📝 Technical Documentation</div>
+                <button class="modal-close" onclick="closeWriterModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4" style="background: rgba(255, 215, 0, 0.1); border: 1px solid #FFD700; border-radius: 4px; padding: 12px;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: #FFD700; margin-bottom: 4px;">Documentation For</div>
+                    <div style="font-weight: 600;" id="writer-feature-title"></div>
+                    <div class="font-mono" style="font-size: 12px; color: var(--text-secondary);" id="writer-feature-id"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Documentation Type</label>
+                    <select class="form-select" id="writer-doc-type">
+                        <option value="user-guide">User Guide</option>
+                        <option value="api-docs">API Documentation</option>
+                        <option value="changelog">Changelog Entry</option>
+                        <option value="readme">README Update</option>
+                        <option value="all">Complete Documentation</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Documentation Summary</label>
+                    <textarea class="form-textarea" id="writer-summary" rows="4" placeholder="Summarize the feature and how it should be documented..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Key Points to Document</label>
+                    <textarea class="form-textarea" id="writer-keypoints" rows="3" placeholder="List the key functionality, configuration options, or usage examples..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeWriterModal()">Skip</button>
+                <button class="btn btn-primary" onclick="submitDocumentation()" style="background: #FFD700; border-color: #FFD700; color: var(--bg-primary);">
+                    Complete Documentation
+                </button>
             </div>
         </div>
     </div>
@@ -1342,17 +2006,77 @@ function reproduceBug() {
         </div>
     </div>
 
+    <!-- Search Modal (Quick Open) -->
+    <div class="modal-backdrop hidden search-modal" id="search-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Quick Open</div>
+                <button class="modal-close" onclick="closeSearchModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="search-input-wrapper">
+                    <input type="text" id="search-modal-input" placeholder="Type to search issues..." autocomplete="off">
+                </div>
+                <div class="search-results" id="search-results"></div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-start; font-size: 12px; color: var(--text-secondary);">
+                <span><span class="kbd">↑↓</span> to navigate <span class="kbd">Enter</span> to open <span class="kbd">Esc</span> to close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Help Modal -->
+    <div class="modal-backdrop hidden" id="shortcuts-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Keyboard Shortcuts</div>
+                <button class="modal-close" onclick="closeShortcutsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-grid" id="shortcuts-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeShortcutsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let issues = [];
         let sprints = [];
         let agents = [];
         let currentIssue = null;
         let currentView = 'board';
+        let isEditMode = false;
+        let originalIssueData = null;
+
+        // Keyboard navigation state
+        let keyboardNavState = {
+            enabled: false,
+            selectedIndex: 0,
+            filteredIssues: []
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             setupEventListeners();
+            setupKeyboardShortcuts();
+            setupResizableSidebar();
+            loadSidebarWidth();
+            populateShortcutsModal();
         });
 
         async function loadData() {
@@ -1368,10 +2092,23 @@ function reproduceBug() {
                 console.error('Failed to load issues:', error);
                 // Use sample data for demo
                 issues = [
-                    { id: 'BUG-001', title: 'Login page crash on mobile', category: 'Bug', status: 'Open', priority: 'P0', assignedAgent: 'Frontend Agent', sprintId: null, description: 'App crashes when opening login on iOS Safari' },
-                    { id: 'FET-001', title: 'Add dark mode toggle', category: 'Feature', status: 'In Progress', priority: 'P1', assignedAgent: 'UI Agent', sprintId: null, description: 'User requested dark mode for accessibility' },
+                    { id: 'BUG-001', title: 'Login page crash on mobile', category: 'Bug', status: 'Open', priority: 'P0', assignedAgent: 'Frontend Agent', sprintId: null, description: 'App crashes when opening login on iOS Safari', comments: [
+                        { author: 'Client', message: 'This happens every time I try to login on my iPhone. Very frustrating!', timestamp: '2026-03-25T10:30:00Z' },
+                        { author: 'Developer Agent', message: 'Thanks for the report. Can you confirm which iOS version you are on?', timestamp: '2026-03-25T11:00:00Z' }
+                    ]},
+                    { id: 'FET-001', title: 'Add dark mode toggle', category: 'Feature', status: 'In Progress', priority: 'P1', assignedAgent: 'UI Agent', sprintId: null, description: 'User requested dark mode for accessibility', comments: [
+                        { author: 'Client', message: 'Would love to see this feature soon. The bright screen hurts my eyes at night.', timestamp: '2026-03-24T15:00:00Z' },
+                        { author: 'System', message: 'This request has been triaged and assigned to the UI Agent.', timestamp: '2026-03-24T16:00:00Z' },
+                        { author: 'UI Agent', message: 'Design mockups are ready for review.', timestamp: '2026-03-25T09:00:00Z' },
+                        { author: 'Client', message: 'The mockups look great! Please proceed with implementation.', timestamp: '2026-03-25T10:00:00Z' }
+                    ]},
+                    { id: 'FET-003', title: 'AI-powered code completion', category: 'Feature', status: 'Open', priority: 'P1', assignedAgent: 'Product Manager', sprintId: null, description: 'Integrate AI code completion to help developers write code faster', comments: [], activityLog: []},
                     { id: 'SEC-001', title: 'Update JWT secret', category: 'Security', status: 'Ready for QA', priority: 'P2', assignedAgent: 'Backend Agent', sprintId: null, description: 'Rotate secrets per security policy' },
-                    { id: 'BUG-002', title: 'Database connection leak', category: 'Bug', status: 'In QA Review', priority: 'P0', assignedAgent: 'Backend Agent', sprintId: null, description: 'Connections not being released properly' },
+                    { id: 'BUG-002', title: 'Database connection leak', category: 'Bug', status: 'In QA Review', priority: 'P0', assignedAgent: 'Backend Agent', sprintId: null, description: 'Connections not being released properly', comments: [
+                        { author: 'Developer Agent', message: 'Fix implemented in PR #234.', timestamp: '2026-03-26T08:00:00Z' },
+                        { author: 'QA Agent', message: 'Testing in progress. Will update shortly.', timestamp: '2026-03-26T14:00:00Z' },
+                        { author: 'Client', message: 'Is this what was causing the slow response times?', timestamp: '2026-03-26T15:00:00Z' }
+                    ]},
                     { id: 'FET-002', title: 'Export to CSV', category: 'Feature', status: 'Closed', priority: 'P3', assignedAgent: 'Data Agent', sprintId: null, description: 'Allow users to export reports to CSV' }
                 ];
             }
@@ -1397,7 +2134,15 @@ function reproduceBug() {
                     { name: 'Backend Agent', color: '#BB86FC', icon: 'fa-server' },
                     { name: 'UI Agent', color: '#FF8C42', icon: 'fa-paint-brush' },
                     { name: 'Data Agent', color: '#00C8D4', icon: 'fa-database' },
-                    { name: 'QA Agent', color: '#9D00FF', icon: 'fa-check-double' }
+                    { name: 'QA Agent', color: '#9D00FF', icon: 'fa-check-double' },
+                    { name: 'Architecture Agent', color: '#FFD700', icon: 'fa-building' },
+                    { name: 'Product Manager', color: '#FF6B6B', icon: 'fa-tasks' },
+                    { name: 'Frontend Developer Agent', color: '#00B8D4', icon: 'fa-code' },
+                    { name: 'Backend Developer Agent', color: '#7C4DFF', icon: 'fa-server' },
+                    { name: 'Full Stack Developer Agent', color: '#00E676', icon: 'fa-laptop-code' },
+                    { name: 'Data Team Agent', color: '#0091EA', icon: 'fa-database' },
+                    { name: 'Security Developer Agent', color: '#FF1744', icon: 'fa-shield-alt' },
+                    { name: 'Technical Writer Agent', color: '#FFD700', icon: 'fa-pen' }
                 ];
             }
         }
@@ -1414,15 +2159,33 @@ function reproduceBug() {
             const stats = {
                 total: issues.length,
                 todo: issues.filter(i => i.status === 'Open').length,
+                review: issues.filter(i => i.status === 'In Review').length,
+                approved: issues.filter(i => i.status === 'Approved').length,
                 progress: issues.filter(i => i.status === 'In Progress').length,
                 ready: issues.filter(i => i.status === 'Ready for QA').length,
                 qa: issues.filter(i => i.status === 'In QA Review').length,
+                reopened: issues.filter(i => i.status === 'Reopened').length,
                 done: issues.filter(i => i.status === 'Closed').length
             };
-            Object.keys(stats).forEach(key => {
-                const el = document.getElementById(`stat-${key}`);
-                if (el) el.textContent = stats[key];
-            });
+            
+            // Update existing stat elements
+            const totalEl = document.getElementById(`stat-total`);
+            if (totalEl) totalEl.textContent = stats.total;
+            
+            const todoEl = document.getElementById(`stat-todo`);
+            if (todoEl) todoEl.textContent = stats.todo;
+            
+            const progressEl = document.getElementById(`stat-progress`);
+            if (progressEl) progressEl.textContent = stats.progress;
+            
+            const readyEl = document.getElementById(`stat-ready`);
+            if (readyEl) readyEl.textContent = stats.ready;
+            
+            const qaEl = document.getElementById(`stat-qa`);
+            if (qaEl) qaEl.textContent = stats.qa;
+            
+            const doneEl = document.getElementById(`stat-done`);
+            if (doneEl) doneEl.textContent = stats.done;
         }
 
         function updateSprintSelects() {
@@ -1480,33 +2243,116 @@ function reproduceBug() {
 
         function renderKanban() {
             const columns = [
-                { id: 'todo', title: 'To Do', status: 'Open' },
-                { id: 'progress', title: 'In Progress', status: 'In Progress' },
-                { id: 'ready', title: 'Ready QA', status: 'Ready for QA' },
-                { id: 'qa', title: 'In QA', status: 'In QA Review' },
-                { id: 'done', title: 'Done', status: 'Closed' }
+                { id: 'open', title: 'Open', statuses: ['Open'] },
+                { id: 'review', title: 'In Review', statuses: ['In Review'] },
+                { id: 'approved', title: 'Approved', statuses: ['Approved'] },
+                { id: 'progress', title: 'In Progress', statuses: ['In Progress'] },
+                { id: 'ready', title: 'Ready QA', statuses: ['Ready for QA'] },
+                { id: 'qa', title: 'In QA', statuses: ['In QA Review'] },
+                { id: 'reopened', title: 'Reopened', statuses: ['Reopened'] },
+                { id: 'done', title: 'Done', statuses: ['Closed', 'Rejected'] }
             ];
 
             const container = document.getElementById('kanban-board');
             const filtered = getFilteredIssues();
 
             container.innerHTML = columns.map(col => {
-                const colIssues = filtered.filter(i => i.status === col.status || (col.id === 'todo' && i.status === 'Reopened'));
+                const colIssues = filtered.filter(i => col.statuses.includes(i.status) || (col.id === 'open' && i.status === 'Reopened'));
+                const visibleCount = Math.min(colIssues.length, 20);
+                const hiddenCount = colIssues.length - 20;
+                const visibleIssues = colIssues.slice(0, 20);
+                const hasMore = hiddenCount > 0;
+
                 return `
-                    <div class="kanban-column">
+                    <div class="kanban-column" data-column-id="${col.id}">
                         <div class="kanban-header">
                             <div class="kanban-title">
-                                <span class="status-dot ${getStatusDotClass(col.status)}"></span>
+                                <span class="status-dot ${getStatusDotClass(col.statuses[0])}"></span>
                                 ${col.title}
                             </div>
                             <span class="kanban-count">${colIssues.length}</span>
                         </div>
-                        <div class="kanban-content">
-                            ${colIssues.map(issue => renderKanbanCard(issue)).join('')}
+                        <div class="kanban-column-content">
+                            ${visibleIssues.map(issue => renderKanbanCard(issue)).join('')}
                         </div>
+                        ${hasMore ? `
+                            <div class="more-items-indicator" onclick="expandColumn('${col.id}')">
+                                +${hiddenCount} more ▼
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
+        }
+
+        // Expand column to show all items
+        function expandColumn(columnId) {
+            const column = document.querySelector(`.kanban-column[data-column-id="${columnId}"]`);
+            if (column) {
+                // Remove the indicator
+                const indicator = column.querySelector('.more-items-indicator');
+                if (indicator) indicator.remove();
+                // Allow the column to show more items
+                column.style.overflowY = 'auto';
+
+                // Re-render this column with all items
+                const columns = [
+                    { id: 'open', title: 'Open', statuses: ['Open'] },
+                    { id: 'review', title: 'In Review', statuses: ['In Review'] },
+                    { id: 'approved', title: 'Approved', statuses: ['Approved'] },
+                    { id: 'progress', title: 'In Progress', statuses: ['In Progress'] },
+                    { id: 'ready', title: 'Ready QA', statuses: ['Ready for QA'] },
+                    { id: 'qa', title: 'In QA', statuses: ['In QA Review'] },
+                    { id: 'reopened', title: 'Reopened', statuses: ['Reopened'] },
+                    { id: 'done', title: 'Done', statuses: ['Closed', 'Rejected'] }
+                ];
+
+                const col = columns.find(c => c.id === columnId);
+                if (!col) return;
+
+                const filtered = getFilteredIssues();
+                const colIssues = filtered.filter(i => col.statuses.includes(i.status) || (col.id === 'open' && i.status === 'Reopened'));
+
+                const content = column.querySelector('.kanban-column-content');
+                if (content) {
+                    content.innerHTML = colIssues.map(issue => renderKanbanCard(issue)).join('');
+                }
+            }
+        }
+
+        // Expand column to show all items
+        function expandColumn(columnId) {
+            const column = document.querySelector(`.kanban-column[data-column-id="${columnId}"]`);
+            if (column) {
+                // Remove the indicator
+                const indicator = column.querySelector('.more-items-indicator');
+                if (indicator) indicator.remove();
+                // Allow the column to show more items
+                column.style.overflowY = 'auto';
+
+                // Re-render this column with all items
+                const columns = [
+                    { id: 'open', title: 'Open', statuses: ['Open'] },
+                    { id: 'review', title: 'In Review', statuses: ['In Review'] },
+                    { id: 'approved', title: 'Approved', statuses: ['Approved'] },
+                    { id: 'progress', title: 'In Progress', statuses: ['In Progress'] },
+                    { id: 'ready', title: 'Ready QA', statuses: ['Ready for QA'] },
+                    { id: 'qa', title: 'In QA', statuses: ['In QA Review'] },
+                    { id: 'reopened', title: 'Reopened', statuses: ['Reopened'] },
+                    { id: 'done', title: 'Done', statuses: ['Closed', 'Rejected'] }
+                ];
+
+                const col = columns.find(c => c.id === columnId);
+                if (!col) return;
+
+                const filtered = getFilteredIssues();
+                const colIssues = filtered.filter(i => col.statuses.includes(i.status) || (col.id === 'open' && i.status === 'Reopened'));
+
+                const content = column.querySelector('.kanban-column-content');
+                if (content) {
+                    content.innerHTML = colIssues.map(issue => renderKanbanCard(issue)).join('');
+                }
+            }
         }
 
         function renderKanbanCard(issue) {
@@ -1539,7 +2385,7 @@ function reproduceBug() {
                         <td class="table-issue-id">${issue.id}</td>
                         <td>${escapeHtml(issue.title)}</td>
                         <td><span class="badge badge-category ${issue.category.toLowerCase()}">${issue.category}</span></td>
-                        <td><span class="badge badge-status-${issue.status.replace(/\s+/g, '-').toLowerCase()}">${issue.status}</span></td>
+                        <td><span class="badge badge-status-${issue.status.replace(/\s+/g, '-').toLowerCase().replace('approved', 'closed').replace('rejected', 'reopened')}">${issue.status}</span></td>
                         <td><span class="card-priority priority-${issue.priority.toLowerCase()}">${issue.priority}</span></td>
                         <td>${agent ? agent.name : '-'}</td>
                         <td>${sprint ? sprint.name : '-'}</td>
@@ -1595,7 +2441,10 @@ function reproduceBug() {
                 'Ready for QA': 'status-ready-qa',
                 'In QA Review': 'status-qa',
                 'Closed': 'status-closed',
-                'Reopened': 'status-reopened'
+                'Reopened': 'status-reopened',
+                'In Review': 'status-in-review',
+                'Approved': 'status-approved',
+                'Rejected': 'status-rejected'
             };
             return classes[status] || 'status-open';
         }
@@ -1605,6 +2454,42 @@ function reproduceBug() {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // Client comment recognition
+        function isClientComment(author) {
+            if (!author) return false;
+            const normalized = author.toLowerCase().trim();
+            return normalized === 'client' || normalized === 'user' || normalized.startsWith('user');
+        }
+
+        // Get comment CSS class based on author
+        function getCommentClass(author) {
+            if (!author) return 'comment-agent';
+            const normalized = author.toLowerCase().trim();
+            if (isClientComment(author)) {
+                return 'comment-client';
+            }
+            if (normalized === 'system') {
+                return 'comment-system';
+            }
+            return 'comment-agent';
+        }
+
+        // Get comment badge based on author
+        function getCommentBadge(author) {
+            if (isClientComment(author)) {
+                return '👤 Client';
+            }
+            return `🤖 ${author}`;
+        }
+
+        // Get avatar content based on author
+        function getCommentAvatar(author) {
+            if (isClientComment(author)) {
+                return '👤';
+            }
+            return '🤖';
         }
 
         function formatDate(dateString) {
@@ -1677,6 +2562,15 @@ function reproduceBug() {
         }
 
         function closeDetailModal() {
+            // Reset edit mode if active
+            if (isEditMode) {
+                isEditMode = false;
+                originalIssueData = null;
+                document.getElementById('edit-mode-indicator').style.display = 'none';
+                document.getElementById('edit-issue-btn').style.display = 'inline-flex';
+                document.getElementById('cancel-edit-btn').style.display = 'none';
+                document.getElementById('save-edit-btn').style.display = 'none';
+            }
             document.getElementById('detail-modal').classList.add('hidden');
             currentIssue = null;
         }
@@ -1763,6 +2657,17 @@ function reproduceBug() {
         function openDetail(id) {
             currentIssue = issues.find(i => i.id === id);
             if (!currentIssue) return;
+            
+            // Reset edit mode when opening
+            isEditMode = false;
+            originalIssueData = null;
+
+            renderDetailView();
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function renderDetailView() {
+            if (!currentIssue) return;
 
             document.getElementById('detail-title').textContent = currentIssue.title;
             document.getElementById('detail-id').textContent = currentIssue.id;
@@ -1790,11 +2695,11 @@ function reproduceBug() {
 
             const comments = document.getElementById('detail-comments');
             comments.innerHTML = (currentIssue.comments || []).map(c => `
-                <div class="comment">
-                    <div class="comment-avatar">${c.author[0]}</div>
+                <div class="comment ${getCommentClass(c.author)}">
+                    <div class="comment-avatar">${getCommentAvatar(c.author)}</div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <span class="comment-author">${c.author}</span>
+                            <span class="comment-author">${getCommentBadge(c.author)}</span>
                             <span class="comment-time">${formatDate(c.timestamp)}</span>
                         </div>
                         <div class="comment-text">${escapeHtml(c.message)}</div>
@@ -1802,7 +2707,1279 @@ function reproduceBug() {
                 </div>
             `).join('') || '<p style="color:var(--text-muted)">No comments yet</p>';
 
-            document.getElementById('detail-modal').classList.remove('hidden');
+            // Render activity log
+            renderActivityLog();
+            
+            // Render All tab content
+            renderAllTabContent();
+        }
+
+        // Enable edit mode for Client
+        function enableEditMode() {
+            if (!currentIssue) return;
+            
+            isEditMode = true;
+            originalIssueData = { ...currentIssue };
+
+            // Show edit mode indicator
+            document.getElementById('edit-mode-indicator').style.display = 'flex';
+
+            // Update footer buttons
+            document.getElementById('edit-issue-btn').style.display = 'none';
+            document.getElementById('cancel-edit-btn').style.display = 'inline-flex';
+            document.getElementById('save-edit-btn').style.display = 'inline-flex';
+
+            // Make title editable
+            document.getElementById('detail-title').innerHTML = `
+                <input type="text" class="editable-field detail-title-input" id="edit-title" value="${escapeHtml(currentIssue.title)}" />
+            `;
+
+            // Make description editable
+            document.getElementById('detail-description').innerHTML = `
+                <textarea class="editable-textarea" id="edit-description" rows="4">${escapeHtml(currentIssue.description || '')}</textarea>
+            `;
+
+            // Get sprint options
+            const sprintOptions = sprints.map(s => 
+                `<option value="${s.id}" ${s.id === currentIssue.sprintId ? 'selected' : ''}>${s.name}</option>`
+            ).join('');
+            const noSprintSelected = !currentIssue.sprintId ? 'selected' : '';
+
+            // Get agent options
+            const agentOptions = agents.map(a => 
+                `<option value="${a.name}" ${a.name === currentIssue.assignedAgent ? 'selected' : ''}>${a.name}</option>`
+            ).join('');
+            const unassignedSelected = !currentIssue.assignedAgent ? 'selected' : '';
+
+            // Make meta fields editable with dropdowns
+            const meta = document.getElementById('detail-meta');
+            meta.innerHTML = `
+                <div class="meta-item editable">
+                    <div class="meta-label">Status</div>
+                    <select class="editable-field" id="edit-status">
+                        <option value="Open" ${currentIssue.status === 'Open' ? 'selected' : ''}>Open</option>
+                        <option value="In Progress" ${currentIssue.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="Ready for QA" ${currentIssue.status === 'Ready for QA' ? 'selected' : ''}>Ready for QA</option>
+                        <option value="In QA Review" ${currentIssue.status === 'In QA Review' ? 'selected' : ''}>In QA Review</option>
+                        <option value="Closed" ${currentIssue.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                        <option value="Reopened" ${currentIssue.status === 'Reopened' ? 'selected' : ''}>Reopened</option>
+                    </select>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Category</div>
+                    <div class="meta-value">${currentIssue.category}</div>
+                </div>
+                <div class="meta-item editable">
+                    <div class="meta-label">Priority</div>
+                    <select class="editable-field" id="edit-priority">
+                        <option value="P0" ${currentIssue.priority === 'P0' ? 'selected' : ''}>P0 - Critical</option>
+                        <option value="P1" ${currentIssue.priority === 'P1' ? 'selected' : ''}>P1 - High</option>
+                        <option value="P2" ${currentIssue.priority === 'P2' ? 'selected' : ''}>P2 - Medium</option>
+                        <option value="P3" ${currentIssue.priority === 'P3' ? 'selected' : ''}>P3 - Low</option>
+                    </select>
+                </div>
+                <div class="meta-item editable">
+                    <div class="meta-label">Assigned</div>
+                    <select class="editable-field" id="edit-assignee">
+                        <option value="" ${unassignedSelected}>Unassigned</option>
+                        ${agentOptions}
+                    </select>
+                </div>
+                <div class="meta-item editable">
+                    <div class="meta-label">Sprint</div>
+                    <select class="editable-field" id="edit-sprint">
+                        <option value="" ${noSprintSelected}>No Sprint</option>
+                        ${sprintOptions}
+                    </select>
+                </div>
+            `;
+        }
+
+        // Cancel edit mode and restore original values
+        function cancelEditMode() {
+            isEditMode = false;
+            
+            // Hide edit mode indicator
+            document.getElementById('edit-mode-indicator').style.display = 'none';
+
+            // Restore footer buttons
+            document.getElementById('edit-issue-btn').style.display = 'inline-flex';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+            document.getElementById('save-edit-btn').style.display = 'none';
+
+            // Restore read-only view
+            renderDetailView();
+            originalIssueData = null;
+        }
+
+        // Save edits and update issue
+        async function saveEditMode() {
+            if (!currentIssue) return;
+
+            const newTitle = document.getElementById('edit-title').value.trim();
+            const newDescription = document.getElementById('edit-description').value.trim();
+            const newStatus = document.getElementById('edit-status').value;
+            const newPriority = document.getElementById('edit-priority').value;
+            const newAssignee = document.getElementById('edit-assignee').value;
+            const newSprintId = document.getElementById('edit-sprint').value;
+
+            if (!newTitle) {
+                alert('Title is required');
+                return;
+            }
+
+            const updateData = {
+                title: newTitle,
+                description: newDescription,
+                status: newStatus,
+                priority: newPriority,
+                assignee: newAssignee,
+                sprintId: newSprintId || null
+            };
+
+            try {
+                // Call the API to update the issue
+                const response = await fetch(`/api/issues/${currentIssue.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                // Update local issue data
+                currentIssue.title = newTitle;
+                currentIssue.description = newDescription;
+                currentIssue.status = newStatus;
+                currentIssue.priority = newPriority;
+                currentIssue.assignedAgent = newAssignee || null;
+                currentIssue.sprintId = newSprintId || null;
+
+                // Add activity log comment
+                if (!currentIssue.comments) currentIssue.comments = [];
+                currentIssue.comments.push({
+                    author: 'Client',
+                    message: 'Issue updated by Client',
+                    timestamp: new Date().toISOString()
+                });
+
+                // Exit edit mode and refresh
+                isEditMode = false;
+                originalIssueData = null;
+                document.getElementById('edit-mode-indicator').style.display = 'none';
+                document.getElementById('edit-issue-btn').style.display = 'inline-flex';
+                document.getElementById('cancel-edit-btn').style.display = 'none';
+                document.getElementById('save-edit-btn').style.display = 'none';
+
+                renderDetailView();
+                
+                // Refresh the main UI
+                await loadIssues();
+                updateUI();
+
+            } catch (error) {
+                console.error('Failed to save issue:', error);
+                
+                // Demo mode: update locally even if API fails
+                currentIssue.title = newTitle;
+                currentIssue.description = newDescription;
+                currentIssue.status = newStatus;
+                currentIssue.priority = newPriority;
+                currentIssue.assignedAgent = newAssignee || null;
+                currentIssue.sprintId = newSprintId || null;
+
+                // Add activity log comment
+                if (!currentIssue.comments) currentIssue.comments = [];
+                currentIssue.comments.push({
+                    author: 'Client',
+                    message: 'Issue updated by Client',
+                    timestamp: new Date().toISOString()
+                });
+
+                isEditMode = false;
+                originalIssueData = null;
+                document.getElementById('edit-mode-indicator').style.display = 'none';
+                document.getElementById('edit-issue-btn').style.display = 'inline-flex';
+                document.getElementById('cancel-edit-btn').style.display = 'none';
+                document.getElementById('save-edit-btn').style.display = 'none';
+
+                renderDetailView();
+                updateUI();
+            }
+        }
+
+        // ============================================
+        // FEATURE APPROVAL/REJECTION WORKFLOW
+        // ============================================
+
+        let featureActionMode = null; // 'approve' or 'reject'
+        let rejectedFeatures = []; // In-memory storage for rejected features
+
+        // Update status dropdown to include "In Review" status for Features
+        function getFeatureStatusOptions(currentStatus) {
+            return `
+                <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>Open</option>
+                <option value="In Review" ${currentStatus === 'In Review' ? 'selected' : ''}>In Review</option>
+                <option value="Approved" ${currentStatus === 'Approved' ? 'selected' : ''}>Approved</option>
+                <option value="In Progress" ${currentStatus === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                <option value="Ready for QA" ${currentStatus === 'Ready for QA' ? 'selected' : ''}>Ready for QA</option>
+                <option value="In QA Review" ${currentStatus === 'In QA Review' ? 'selected' : ''}>In QA Review</option>
+                <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>Closed</option>
+                <option value="Rejected" ${currentStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+            `;
+        }
+
+        // Check if feature actions should be shown
+        function shouldShowFeatureActions(issue) {
+            if (!issue || issue.category !== 'Feature') return false;
+            // Show actions for Open, In Review (client approval), 
+            // Approved, In Progress (developer), Ready for QA, In QA Review (QA),
+            // and Closed (technical writer)
+            return ['Open', 'In Review', 'Approved', 'In Progress', 'Ready for QA', 'In QA Review', 'Closed'].includes(issue.status);
+        }
+
+        // Show/hide feature action buttons
+        function updateFeatureActionButtons() {
+            const featureActions = document.getElementById('feature-actions');
+            const developerActions = document.getElementById('developer-actions');
+            const qaActions = document.getElementById('qa-actions');
+            const writerActions = document.getElementById('writer-actions');
+            const editBtn = document.getElementById('edit-issue-btn');
+            
+            if (!currentIssue) return;
+            
+            // Hide all action groups by default
+            if (featureActions) featureActions.style.display = 'none';
+            if (developerActions) developerActions.style.display = 'none';
+            if (qaActions) qaActions.style.display = 'none';
+            if (writerActions) writerActions.style.display = 'none';
+            
+            // Show/hide buttons based on status and category
+            const isFeature = currentIssue.category === 'Feature';
+            
+            if (isFeature) {
+                // Show Client actions (Approve/Reject) for Open/In Review
+                if (currentIssue.status === 'Open' || currentIssue.status === 'In Review') {
+                    if (featureActions) {
+                        featureActions.style.display = 'flex';
+                        if (editBtn) editBtn.style.display = 'none';
+                        
+                        // Show/hide "Send for Review" button based on current status
+                        const sendReviewBtn = document.getElementById('send-review-btn');
+                        if (sendReviewBtn) {
+                            sendReviewBtn.style.display = currentIssue.status === 'Open' ? 'inline-flex' : 'none';
+                        }
+                    }
+                }
+                
+                // Show Developer actions for Approved/In Progress
+                if (currentIssue.status === 'Approved' || currentIssue.status === 'In Progress') {
+                    if (developerActions) {
+                        developerActions.style.display = 'flex';
+                        if (editBtn) editBtn.style.display = 'none';
+                        
+                        // Show/hide Architecture Plan button based on status
+                        const archBtn = developerActions.querySelector('[onclick="openArchitectModal()"]');
+                        if (archBtn) {
+                            archBtn.style.display = currentIssue.status === 'Approved' ? 'inline-flex' : 'none';
+                        }
+                        
+                        // Show/hide Mark Ready for QA button based on status
+                        const qaBtn = developerActions.querySelector('[onclick="markReadyForQA()"]');
+                        if (qaBtn) {
+                            qaBtn.style.display = currentIssue.status === 'In Progress' ? 'inline-flex' : 'none';
+                        }
+                    }
+                }
+                
+                // Show QA actions for Ready for QA and In QA Review
+                if (currentIssue.status === 'Ready for QA' || currentIssue.status === 'In QA Review') {
+                    if (qaActions) {
+                        qaActions.style.display = 'flex';
+                        if (editBtn) editBtn.style.display = 'none';
+                    }
+                }
+                
+                // Show Writer actions for Closed
+                if (currentIssue.status === 'Closed') {
+                    if (writerActions) {
+                        writerActions.style.display = 'flex';
+                        if (editBtn) editBtn.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Show edit button if no special actions are displayed and not in edit mode
+            const anyActionsVisible = 
+                (featureActions && featureActions.style.display === 'flex') ||
+                (developerActions && developerActions.style.display === 'flex') ||
+                (qaActions && qaActions.style.display === 'flex') ||
+                (writerActions && writerActions.style.display === 'flex');
+            
+            if (!anyActionsVisible && editBtn && !isEditMode) {
+                editBtn.style.display = 'inline-flex';
+            }
+        }
+
+        // Override renderDetailView to include feature action buttons
+        const originalRenderDetailView = renderDetailView;
+        renderDetailView = function() {
+            originalRenderDetailView();
+            updateFeatureActionButtons();
+        };
+
+        // Send Feature for Review (for initial submission)
+        async function sendFeatureForReview() {
+            if (!currentIssue || currentIssue.category !== 'Feature') return;
+            
+            currentIssue.status = 'In Review';
+            currentIssue.assignedAgent = 'Architecture Agent';
+            
+            // Add system comment
+            if (!currentIssue.comments) currentIssue.comments = [];
+            currentIssue.comments.push({
+                author: 'System',
+                message: `📋 Feature sent to Architecture Agent for review.`,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add activity log
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'sent_for_review',
+                timestamp: new Date().toISOString(),
+                details: 'Sent to Architecture Agent for review'
+            });
+            
+            await updateIssueOnServer(currentIssue);
+            renderDetailView();
+            updateUI();
+        }
+
+        // Open Approve Modal
+        function openFeatureApproveModal() {
+            featureActionMode = 'approve';
+            document.getElementById('feature-action-title').textContent = 'Approve Feature';
+            document.getElementById('feature-approve-section').style.display = 'block';
+            document.getElementById('feature-reject-section').style.display = 'none';
+            document.getElementById('approve-notes').value = '';
+            document.getElementById('confirm-feature-action-btn').textContent = '✅ Approve Feature';
+            document.getElementById('confirm-feature-action-btn').style.background = 'var(--priority-p3-bg)';
+            document.getElementById('confirm-feature-action-btn').style.color = 'var(--priority-p3-text)';
+            document.getElementById('confirm-feature-action-btn').style.borderColor = 'var(--priority-p3-text)';
+            document.getElementById('feature-action-modal').classList.remove('hidden');
+        }
+
+        // Open Reject Modal
+        function openFeatureRejectModal() {
+            featureActionMode = 'reject';
+            document.getElementById('feature-action-title').textContent = 'Reject Feature';
+            document.getElementById('feature-approve-section').style.display = 'none';
+            document.getElementById('feature-reject-section').style.display = 'block';
+            document.getElementById('reject-reason').value = '';
+            document.getElementById('notify-stakeholders').checked = true;
+            document.getElementById('confirm-feature-action-btn').textContent = '❌ Reject Feature';
+            document.getElementById('confirm-feature-action-btn').style.background = 'var(--priority-p0-bg)';
+            document.getElementById('confirm-feature-action-btn').style.color = 'var(--priority-p0-text)';
+            document.getElementById('confirm-feature-action-btn').style.borderColor = 'var(--priority-p0-text)';
+            document.getElementById('feature-action-modal').classList.remove('hidden');
+        }
+
+        // Close Feature Action Modal
+        function closeFeatureActionModal() {
+            document.getElementById('feature-action-modal').classList.add('hidden');
+            featureActionMode = null;
+        }
+
+        // Generate rejection ID
+        function generateRejectionId() {
+            const count = rejectedFeatures.length + 1;
+            return `REJ-FET-${String(count).padStart(3, '0')}`;
+        }
+
+        // Confirm Feature Action (Approve or Reject)
+        async function confirmFeatureAction() {
+            if (!currentIssue || !featureActionMode) return;
+            
+            if (featureActionMode === 'approve') {
+                await approveFeature();
+            } else if (featureActionMode === 'reject') {
+                await rejectFeature();
+            }
+            
+            closeFeatureActionModal();
+        }
+
+        // Approve Feature
+        async function approveFeature() {
+            const notes = document.getElementById('approve-notes').value.trim();
+            
+            currentIssue.status = 'Approved';
+            
+            // Add approval comment
+            if (!currentIssue.comments) currentIssue.comments = [];
+            let approvalMessage = '✅ **APPROVED by Architecture Agent**';
+            if (notes) {
+                approvalMessage += `\n\n**Architecture Notes:**\n${notes}`;
+            }
+            currentIssue.comments.push({
+                author: 'Architecture Agent',
+                message: approvalMessage,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add activity log
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'approved',
+                timestamp: new Date().toISOString(),
+                details: notes || 'Feature approved'
+            });
+            
+            await updateIssueOnServer(currentIssue);
+            renderDetailView();
+            updateUI();
+        }
+
+        // Reject Feature
+        async function rejectFeature() {
+            const reason = document.getElementById('reject-reason').value.trim();
+            const notify = document.getElementById('notify-stakeholders').checked;
+            
+            if (!reason) {
+                alert('Please provide a rejection reason.');
+                return;
+            }
+            
+            const rejectionId = generateRejectionId();
+            
+            // Store rejection in memory
+            rejectedFeatures.push({
+                id: rejectionId,
+                issueId: currentIssue.id,
+                title: currentIssue.title,
+                reason: reason,
+                rejectedAt: new Date().toISOString()
+            });
+            
+            // Update issue status
+            currentIssue.status = 'Rejected';
+            
+            // Add rejection comment
+            if (!currentIssue.comments) currentIssue.comments = [];
+            const rejectionComment = `❌ **REJECTED - Architecture Decision**
+
+**Reason:** ${reason}
+
+This feature will not be implemented.
+${notify ? '\n**WebScout/Product Manager:** Do not suggest similar features.' : ''}
+
+**Rejection ID:** ${rejectionId}`;
+            
+            currentIssue.comments.push({
+                author: 'Architecture Agent',
+                message: rejectionComment,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add activity log
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'rejected',
+                timestamp: new Date().toISOString(),
+                details: reason,
+                rejectionId: rejectionId
+            });
+            
+            // Auto-close the rejected feature
+            setTimeout(async () => {
+                currentIssue.status = 'Closed';
+                
+                // Add closure comment
+                currentIssue.comments.push({
+                    author: 'System',
+                    message: `🔒 Feature auto-closed after rejection.`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (!currentIssue.activityLog) currentIssue.activityLog = [];
+                currentIssue.activityLog.push({
+                    action: 'closed',
+                    timestamp: new Date().toISOString(),
+                    details: 'Auto-closed after rejection'
+                });
+                
+                await updateIssueOnServer(currentIssue);
+                renderDetailView();
+                updateUI();
+            }, 500);
+            
+            await updateIssueOnServer(currentIssue);
+            renderDetailView();
+            updateUI();
+        }
+
+        // Helper function to update issue on server
+        async function updateIssueOnServer(issue) {
+            try {
+                const response = await fetch(`/api/issues/${issue.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(issue)
+                });
+                if (!response.ok) throw new Error('Update failed');
+            } catch (error) {
+                console.log('Demo mode: Issue updated locally');
+            }
+        }
+
+        // ============================================
+        // FEATURE APPROVAL WORKFLOW - MULTI-AGENT ORCHESTRATION
+        // ============================================
+
+        // Store for tracking workflow state
+        let workflowState = {
+            currentFeature: null,
+            architecturePlan: null,
+            qaReport: null
+        };
+
+        // Developer agent mapping based on type
+        const DEVELOPER_AGENTS = {
+            'Frontend': ['Frontend Developer Agent', 'UI Agent'],
+            'Backend': ['Backend Developer Agent', 'API Agent'],
+            'FullStack': ['Full Stack Developer Agent'],
+            'Data': ['Data Team Agent', 'Database Agent'],
+            'Security': ['Security Developer Agent']
+        };
+
+        // Step 1: Client Approves Feature - Triggers Architecture Planning
+        async function approveFeature() {
+            const notes = document.getElementById('approve-notes').value.trim();
+            
+            // Update status to Approved
+            currentIssue.status = 'Approved';
+            currentIssue.assignedAgent = 'Architecture Agent';
+            
+            // Add approval comment
+            if (!currentIssue.comments) currentIssue.comments = [];
+            let approvalMessage = '✅ **Approved by Client** - Ready to proceed with implementation';
+            if (notes) {
+                approvalMessage += `\n\n**Client Notes:**\n${notes}`;
+            }
+            currentIssue.comments.push({
+                author: 'Client',
+                message: approvalMessage,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add system comment
+            currentIssue.comments.push({
+                author: 'System',
+                message: '🏗️ Architecture Agent assigned - Planning phase started',
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add activity log
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'client_approved',
+                timestamp: new Date().toISOString(),
+                details: 'Client approved feature for development'
+            });
+            
+            await updateIssueOnServer(currentIssue);
+            
+            // Trigger Architecture Agent planning
+            setTimeout(() => {
+                openArchitectModal();
+            }, 500);
+            
+            renderDetailView();
+            updateUI();
+        }
+
+        // Architecture Agent Analysis Function
+        function analyzeFeatureForArchitecture(issue) {
+            const title = issue.title.toLowerCase();
+            const desc = (issue.description || '').toLowerCase();
+            
+            let techApproach = "";
+            let filesToModify = "";
+            let acceptanceCriteria = "";
+            let developerType = "";
+            let effort = "";
+            
+            // Analyze based on keywords
+            if (title.includes('websocket') || title.includes('sse') || title.includes('real-time')) {
+                techApproach = `Implement Server-Sent Events (SSE) for real-time data streaming:
+1. Create SSE endpoint in backend (/api/stream)
+2. Use async generators for event streaming
+3. Frontend: EventSource API for consumption
+4. Auto-reconnect with exponential backoff
+5. JSON format: {symbol, price, timestamp}
+
+Benefits: HTTP-compatible, auto-reconnect, simpler than WebSocket`;
+                
+                filesToModify = `Backend:
+- backend/routers/stock_routes.py (add SSE endpoint)
+- backend/services/sse_publisher.py (new)
+
+Frontend:
+- frontend/hooks/useStockStream.ts (new)
+- frontend/components/StockPrice.tsx (update)`;
+                
+                acceptanceCriteria = `- [ ] SSE endpoint responds with text/event-stream
+- [ ] Real-time price updates received
+- [ ] Auto-reconnect on disconnect
+- [ ] Multiple symbols subscription support
+- [ ] Error handling for connection failures`;
+                
+                developerType = "fullstack";
+                effort = "medium";
+            }
+            
+            else if (title.includes('cron') || title.includes('schedule') || title.includes('automation')) {
+                techApproach = `Implement Event-Driven Automation with Cron:
+1. Extend existing OpenClaw cron system
+2. Add file watcher capability (chokidar)
+3. Webhook trigger endpoints
+4. Schedule configuration UI
+5. Agent execution on triggers
+
+Components: Cron scheduler, File watcher, Webhook server`;
+                
+                filesToModify = `- /opt/homebrew/lib/node_modules/openclaw/src/cron/ (extend)
+- skills/cron/ (new skill)
+- Gateway config for triggers`;
+                
+                acceptanceCriteria = `- [ ] Cron jobs schedule correctly
+- [ ] File watchers detect changes
+- [ ] Webhooks trigger agents
+- [ ] Schedule UI for configuration`;
+                
+                developerType = "backend";
+                effort = "large";
+            }
+            
+            else if (title.includes('watchlist') || title.includes('portfolio')) {
+                techApproach = `Implement Multiple Watchlists:
+1. Database schema: watchlists table, watchlist_stocks junction
+2. CRUD API: create, read, update, delete watchlists
+3. Real-time P&L calculation
+4. UI: Sidebar watchlist selector, drag-drop reorder
+5. Persistence: LocalStorage + Database sync`;
+                
+                filesToModify = `Database:
+- migrations/create_watchlists.sql
+
+Backend:
+- backend/routers/watchlist_routes.py
+- backend/models/watchlist_models.py
+
+Frontend:
+- frontend/components/WatchlistManager.tsx
+- frontend/hooks/useWatchlists.ts`;
+                
+                acceptanceCriteria = `- [ ] Create multiple named watchlists
+- [ ] Add/remove stocks from watchlists
+- [ ] Real-time P&L per watchlist
+- [ ] Drag to reorder stocks
+- [ ] Persist to database`;
+                
+                developerType = "fullstack";
+                effort = "medium";
+            }
+            
+            else if (title.includes('gui') || title.includes('desktop') || title.includes('automation')) {
+                techApproach = `Implement GUI Desktop Automation:
+1. Platform abstraction layer
+2. macOS: Accessibility API (AXUIElement)
+3. Windows: UI Automation API
+4. Actions: click, type, screenshot, scroll
+5. Skill wrapper for OpenClaw
+
+Security: Requires user permission for accessibility`;
+                
+                filesToModify = `New Skill:
+- skills/gui-automation/SKILL.md
+- skills/gui-automation/mac.py
+- skills/gui-automation/windows.py
+- skills/gui-automation/bridge.ts`;
+                
+                acceptanceCriteria = `- [ ] Click elements by ID/coordinates
+- [ ] Type text into fields
+- [ ] Capture screenshots
+- [ ] Cross-platform support`;
+                
+                developerType = "backend";
+                effort = "xlarge";
+            }
+            
+            else if (title.includes('marketplace') || title.includes('skill') || title.includes('registry')) {
+                techApproach = `Build Skill Marketplace:
+1. Web service: skill-registry/
+2. Database: skills, versions, ratings tables
+3. API: upload, download, search, rate
+4. Frontend: Browse, install, manage
+5. Integration: One-click install to OpenClaw
+
+Discovery: Category filtering, search, trending`;
+                
+                filesToModify = `New Service:
+- services/skill-registry/server.ts
+- services/skill-registry/models/
+
+Frontend:
+- frontend/pages/Marketplace.tsx
+- frontend/components/SkillCard.tsx`;
+                
+                acceptanceCriteria = `- [ ] Upload skills to registry
+- [ ] Browse by category
+- [ ] One-click install
+- [ ] Rate and review
+- [ ] Version management`;
+                
+                developerType = "fullstack";
+                effort = "large";
+            }
+            
+            else if (title.includes('voice') || title.includes('whisper') || title.includes('audio')) {
+                techApproach = `Implement Voice Interface:
+1. Whisper integration for STT
+2. Voice activation (wake word)
+3. Command parsing and routing
+4. Audio playback for responses
+5. Skill: voice-command
+
+Privacy: Process locally if possible`;
+                
+                filesToModify = `New Skill:
+- skills/voice/STT.ts
+- skills/voice/activation.ts
+- skills/voice/commands.ts`;
+                
+                acceptanceCriteria = `- [ ] Voice commands recognized
+- [ ] Wake word detection
+- [ ] Command routing to agents
+- [ ] Audio feedback`;
+                
+                developerType = "backend";
+                effort = "large";
+            }
+            
+            else if (title.includes('trade') || title.includes('order') || title.includes('buy') || title.includes('sell')) {
+                techApproach = `Implement Trade from Charts (TFC):
+1. Chart context menu (right-click)
+2. Order modal pre-filled with price
+3. One-click order execution
+4. Order confirmation flow
+5. Integration with broker API
+
+Security: Confirm before execute`;
+                
+                filesToModify = `Frontend:
+- frontend/components/ChartContextMenu.tsx
+- frontend/components/OrderModal.tsx
+- frontend/hooks/useTrading.ts
+
+Backend:
+- backend/routers/order_routes.py`;
+                
+                acceptanceCriteria = `- [ ] Right-click on chart for context menu
+- [ ] Pre-filled order form
+- [ ] One-click execute
+- [ ] Order confirmation
+- [ ] Integration with trading API`;
+                
+                developerType = "frontend";
+                effort = "medium";
+            }
+            
+            else {
+                // Generic fallback
+                techApproach = `Architecture Analysis Required:
+1. Review feature requirements
+2. Determine technical approach
+3. Identify files to modify
+4. Define acceptance criteria
+5. Assign appropriate developer
+
+Please review and customize this plan.`;
+                
+                filesToModify = `- TBD based on technical approach`;
+                acceptanceCriteria = `- [ ] Feature implemented
+- [ ] Tests passing
+- [ ] QA verified`;
+                developerType = "fullstack";
+                effort = "medium";
+            }
+            
+            return {
+                techApproach,
+                filesToModify,
+                acceptanceCriteria,
+                developerType,
+                effort
+            };
+        }
+
+        // Step 2: Architecture Planning
+        function openArchitectModal() {
+            if (!currentIssue) return;
+            
+            workflowState.currentFeature = currentIssue;
+            
+            document.getElementById('architect-feature-title').textContent = currentIssue.title;
+            document.getElementById('architect-feature-id').textContent = currentIssue.id;
+            
+            // Reset form
+            document.getElementById('architect-form').reset();
+            document.getElementById('architect-assignee').innerHTML = '';
+            
+            // Auto-fill with Architecture Agent analysis
+            const analysis = analyzeFeatureForArchitecture(currentIssue);
+            
+            // Auto-populate fields
+            document.getElementById('architect-approach').value = analysis.techApproach;
+            document.getElementById('architect-files').value = analysis.filesToModify;
+            document.getElementById('architect-criteria').value = analysis.acceptanceCriteria;
+            
+            // Map developer type to select value
+            const devTypeMap = {
+                'frontend': 'Frontend',
+                'backend': 'Backend',
+                'fullstack': 'FullStack',
+                'data': 'Data',
+                'security': 'Security'
+            };
+            const devType = devTypeMap[analysis.developerType] || 'FullStack';
+            document.getElementById('architect-developer-type').value = devType;
+            
+            // Map effort to select value
+            const effortMap = {
+                'small': 'Small',
+                'medium': 'Medium',
+                'large': 'Large',
+                'xlarge': 'XLarge'
+            };
+            const effort = effortMap[analysis.effort] || 'Medium';
+            document.getElementById('architect-effort').value = effort;
+            
+            // Update developer options based on auto-filled type
+            updateDeveloperOptions();
+            
+            // Show auto-filled indicator
+            const modalBody = document.querySelector('#architect-modal .modal-body');
+            let indicator = document.getElementById('arch-auto-fill-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'arch-auto-fill-indicator';
+                indicator.className = 'mb-4';
+                indicator.style.cssText = 'background: rgba(187, 134, 252, 0.1); border: 1px solid var(--accent-purple); border-radius: 4px; padding: 10px 12px; font-size: 13px;';
+                modalBody.insertBefore(indicator, modalBody.firstChild.nextSibling);
+            }
+            indicator.innerHTML = '🤖 <strong>Auto-filled by Architecture Agent</strong> - Review and customize as needed';
+            
+            document.getElementById('architect-modal').classList.remove('hidden');
+        }
+
+        function closeArchitectModal() {
+            document.getElementById('architect-modal').classList.add('hidden');
+        }
+
+        function updateDeveloperOptions() {
+            const developerType = document.getElementById('architect-developer-type').value;
+            const assigneeSelect = document.getElementById('architect-assignee');
+            
+            const agents = DEVELOPER_AGENTS[developerType] || DEVELOPER_AGENTS['FullStack'];
+            
+            assigneeSelect.innerHTML = agents.map(agent => 
+                `<option value="${agent}">${agent}</option>`
+            ).join('');
+        }
+
+        async function submitArchitecturePlan() {
+            if (!currentIssue) return;
+            
+            const approach = document.getElementById('architect-approach').value.trim();
+            const files = document.getElementById('architect-files').value.trim();
+            const criteria = document.getElementById('architect-criteria').value.trim();
+            const effort = document.getElementById('architect-effort').value;
+            const developerType = document.getElementById('architect-developer-type').value;
+            const assignee = document.getElementById('architect-assignee').value;
+            const notes = document.getElementById('architect-notes').value.trim();
+            
+            if (!approach || !criteria) {
+                alert('Please provide technical approach and acceptance criteria.');
+                return;
+            }
+            
+            // Store architecture plan
+            workflowState.architecturePlan = {
+                approach,
+                files,
+                criteria,
+                effort,
+                developerType,
+                assignee,
+                notes
+            };
+            
+            // Update issue status and assignment
+            currentIssue.status = 'In Progress';
+            currentIssue.assignedAgent = assignee;
+            
+            // Add architecture plan comment
+            if (!currentIssue.comments) currentIssue.comments = [];
+            currentIssue.comments.push({
+                author: 'Architecture Agent',
+                message: `📋 **Architecture Plan Complete**
+
+**Technical Approach:**
+${approach}
+
+**Files to Modify:**
+${files || 'TBD'}
+
+**Acceptance Criteria:**
+${criteria}
+
+**Effort Estimate:** ${effort}
+**Developer Type:** ${developerType}
+${notes ? `\n**Additional Notes:**\n${notes}` : ''}`,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add assignment comment
+            currentIssue.comments.push({
+                author: 'System',
+                message: `📋 Architecture complete. Assigned to ${assignee}`,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Add activity log
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'architecture_complete',
+                timestamp: new Date().toISOString(),
+                details: `Architecture plan submitted, assigned to ${assignee}`
+            });
+            
+            // Store acceptance criteria for QA
+            currentIssue.acceptanceCriteria = criteria;
+            
+            await updateIssueOnServer(currentIssue);
+            closeArchitectModal();
+            renderDetailView();
+            updateUI();
+            
+            // Simulate Developer Agent notification
+            console.log(`[Agent Spawn] Developer Agent (${assignee}) notified for ${currentIssue.id}`);
+        }
+
+        // Step 3: Developer Implementation - Mark as Ready for QA
+        async function markReadyForQA() {
+            if (!currentIssue) return;
+            
+            currentIssue.status = 'Ready for QA';
+            
+            if (!currentIssue.comments) currentIssue.comments = [];
+            currentIssue.comments.push({
+                author: currentIssue.assignedAgent || 'Developer Agent',
+                message: '✅ Implementation complete. Feature ready for QA testing.\n\n**Implementation Details:**\n- Feature implemented according to architecture plan\n- Unit tests written and passing\n- Code reviewed and merged',
+                timestamp: new Date().toISOString()
+            });
+            
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'ready_for_qa',
+                timestamp: new Date().toISOString(),
+                details: 'Developer marked feature as ready for QA'
+            });
+            
+            await updateIssueOnServer(currentIssue);
+            renderDetailView();
+            updateUI();
+            
+            // Auto-spawn QA Agent
+            setTimeout(() => {
+                spawnQAAgent(currentIssue.id);
+            }, 500);
+        }
+
+        // Step 4: QA Verification
+        function spawnQAAgent(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue || issue.status !== 'Ready for QA') return;
+            
+            issue.status = 'In QA Review';
+            issue.assignedAgent = 'QA Agent';
+            
+            if (!issue.comments) issue.comments = [];
+            issue.comments.push({
+                author: 'System',
+                message: '🔍 QA Agent auto-assigned - Testing in progress',
+                timestamp: new Date().toISOString()
+            });
+            
+            updateIssueOnServer(issue);
+            
+            // Open QA modal if this is the current issue
+            if (currentIssue && currentIssue.id === issueId) {
+                openQAModal();
+            }
+            
+            updateUI();
+        }
+
+        function openQAModal() {
+            if (!currentIssue) return;
+            
+            document.getElementById('qa-feature-title').textContent = currentIssue.title;
+            document.getElementById('qa-feature-id').textContent = currentIssue.id;
+            
+            // Populate acceptance criteria checklist
+            const criteriaList = document.getElementById('qa-criteria-list');
+            if (currentIssue.acceptanceCriteria) {
+                const criteria = currentIssue.acceptanceCriteria.split('\n').filter(c => c.trim());
+                criteriaList.innerHTML = criteria.map((criterion, index) => `
+                    <label style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; cursor: pointer;"
+                           onmouseover="this.style.color='var(--accent-cyan)'" 
+                           onmouseout="this.style.color=''">
+                        <input type="checkbox" class="qa-criterion-check" data-index="${index}" style="margin-top: 3px;">
+                        <span>${criterion}</span>
+                    </label>
+                `).join('');
+            } else {
+                criteriaList.innerHTML = '<p style="color: var(--text-muted);">No acceptance criteria defined</p>';
+            }
+            
+            // Reset form
+            document.getElementById('qa-report').value = '';
+            document.getElementById('qa-pass').checked = false;
+            document.getElementById('qa-fail').checked = false;
+            
+            document.getElementById('qa-modal').classList.remove('hidden');
+        }
+
+        function closeQAModal() {
+            document.getElementById('qa-modal').classList.add('hidden');
+        }
+
+        async function submitQAReview() {
+            if (!currentIssue) return;
+            
+            const report = document.getElementById('qa-report').value.trim();
+            const regression = document.getElementById('qa-regression').value;
+            const result = document.querySelector('input[name="qa-result"]:checked')?.value;
+            
+            if (!result) {
+                alert('Please select PASS or FAIL result.');
+                return;
+            }
+            
+            // Gather checked criteria
+            const checkedCriteria = Array.from(document.querySelectorAll('.qa-criterion-check:checked'))
+                .map(cb => parseInt(cb.dataset.index));
+            
+            workflowState.qaReport = {
+                report,
+                regression,
+                result,
+                checkedCriteria
+            };
+            
+            if (result === 'pass') {
+                // QA PASS - Close feature and trigger Technical Writer
+                currentIssue.status = 'Closed';
+                
+                if (!currentIssue.comments) currentIssue.comments = [];
+                currentIssue.comments.push({
+                    author: 'QA Agent',
+                    message: `✅ **QA Verified - Feature complete**
+
+**Test Results:**
+${report || 'All tests passed successfully'}
+
+**Regression Testing:** ${regression === 'pass' ? 'No regressions detected' : regression === 'minor' ? 'Minor issues noted' : 'Major regressions found'}
+
+**Acceptance Criteria:** ${checkedCriteria.length} of ${document.querySelectorAll('.qa-criterion-check').length} criteria verified`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (!currentIssue.activityLog) currentIssue.activityLog = [];
+                currentIssue.activityLog.push({
+                    action: 'qa_pass',
+                    timestamp: new Date().toISOString(),
+                    details: 'QA verification passed, feature closed'
+                });
+                
+                await updateIssueOnServer(currentIssue);
+                closeQAModal();
+                renderDetailView();
+                updateUI();
+                
+                // Trigger Technical Writer Agent
+                setTimeout(() => {
+                    spawnTechnicalWriterAgent(currentIssue.id);
+                }, 500);
+                
+            } else {
+                // QA FAIL - Reopen and assign back to developer
+                const originalDeveloper = currentIssue.architecturePlan?.assignee || currentIssue.previousDeveloper || 'Developer Agent';
+                currentIssue.status = 'Reopened';
+                currentIssue.assignedAgent = originalDeveloper;
+                
+                if (!currentIssue.comments) currentIssue.comments = [];
+                currentIssue.comments.push({
+                    author: 'QA Agent',
+                    message: `❌ **QA Failed - Reopening for fixes**
+
+**Failure Reason:**
+${report || 'Testing failed'}
+
+**Regression Status:** ${regression === 'major' ? 'Major regressions detected' : regression === 'minor' ? 'Minor issues noted' : 'No regressions'}
+
+**Action Required:** Please address the issues and resubmit for QA.`,
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (!currentIssue.activityLog) currentIssue.activityLog = [];
+                currentIssue.activityLog.push({
+                    action: 'qa_fail',
+                    timestamp: new Date().toISOString(),
+                    details: `QA failed, reassigned to ${originalDeveloper}`
+                });
+                
+                await updateIssueOnServer(currentIssue);
+                closeQAModal();
+                renderDetailView();
+                updateUI();
+            }
+        }
+
+        // Step 5: Technical Documentation
+        function spawnTechnicalWriterAgent(issueId) {
+            const issue = issues.find(i => i.id === issueId);
+            if (!issue || issue.category !== 'Feature') return;
+            
+            issue.assignedAgent = 'Technical Writer Agent';
+            
+            if (!issue.comments) issue.comments = [];
+            issue.comments.push({
+                author: 'System',
+                message: '📝 Technical Writer Agent assigned - Documentation phase started',
+                timestamp: new Date().toISOString()
+            });
+            
+            updateIssueOnServer(issue);
+            
+            // Open writer modal if this is the current issue
+            if (currentIssue && currentIssue.id === issueId) {
+                openWriterModal();
+            }
+            
+            updateUI();
+        }
+
+        function openWriterModal() {
+            if (!currentIssue) return;
+            
+            document.getElementById('writer-feature-title').textContent = currentIssue.title;
+            document.getElementById('writer-feature-id').textContent = currentIssue.id;
+            
+            // Reset form
+            document.getElementById('writer-doc-type').value = 'user-guide';
+            document.getElementById('writer-summary').value = '';
+            document.getElementById('writer-keypoints').value = '';
+            
+            document.getElementById('writer-modal').classList.remove('hidden');
+        }
+
+        function closeWriterModal() {
+            document.getElementById('writer-modal').classList.add('hidden');
+        }
+
+        async function submitDocumentation() {
+            if (!currentIssue) return;
+            
+            const docType = document.getElementById('writer-doc-type').value;
+            const summary = document.getElementById('writer-summary').value.trim();
+            const keypoints = document.getElementById('writer-keypoints').value.trim();
+            
+            if (!currentIssue.comments) currentIssue.comments = [];
+            currentIssue.comments.push({
+                author: 'Technical Writer Agent',
+                message: `📝 **Documentation updated for ${currentIssue.id}**
+
+**Documentation Type:** ${docType.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+${summary ? `\n**Summary:**\n${summary}` : ''}
+${keypoints ? `\n**Key Points Documented:**\n${keypoints}` : ''}
+
+Documentation has been updated in the product docs.`,
+                timestamp: new Date().toISOString()
+            });
+            
+            if (!currentIssue.activityLog) currentIssue.activityLog = [];
+            currentIssue.activityLog.push({
+                action: 'documentation_complete',
+                timestamp: new Date().toISOString(),
+                details: `Technical documentation completed (${docType})`
+            });
+            
+            await updateIssueOnServer(currentIssue);
+            closeWriterModal();
+            renderDetailView();
+            updateUI();
+            
+            // Workflow complete notification
+            console.log(`[Workflow Complete] Feature ${currentIssue.id} has completed the full lifecycle!`);
+        }
+
+        // Status change listener for auto-spawning agents
+        async function handleStatusChange(newStatus) {
+            if (!currentIssue) return;
+            
+            const oldStatus = currentIssue.status;
+            currentIssue.status = newStatus;
+            
+            // Auto-spawn QA when status changes to "Ready for QA"
+            if (newStatus === 'Ready for QA' && oldStatus !== 'Ready for QA') {
+                await updateIssueOnServer(currentIssue);
+                updateUI();
+                spawnQAAgent(currentIssue.id);
+                return;
+            }
+            
+            // Auto-spawn Technical Writer when status changes to "Closed" for Features
+            if (newStatus === 'Closed' && oldStatus !== 'Closed' && currentIssue.category === 'Feature') {
+                await updateIssueOnServer(currentIssue);
+                updateUI();
+                spawnTechnicalWriterAgent(currentIssue.id);
+                return;
+            }
+            
+            await updateIssueOnServer(currentIssue);
+            updateUI();
+        }
+
+        // Check if a feature idea was previously rejected (for WebScout integration)
+        function isFeatureRejected(similarTitle) {
+            return rejectedFeatures.some(rejected => 
+                rejected.title.toLowerCase().includes(similarTitle.toLowerCase()) ||
+                similarTitle.toLowerCase().includes(rejected.title.toLowerCase())
+            );
+        }
+
+        // Get rejection info for a feature (for WebScout integration)
+        function getRejectionInfo(featureTitle) {
+            return rejectedFeatures.find(rejected => 
+                rejected.title.toLowerCase().includes(featureTitle.toLowerCase()) ||
+                featureTitle.toLowerCase().includes(rejected.title.toLowerCase())
+            );
         }
 
         function editCurrentIssue() {
@@ -1854,7 +4031,9 @@ function reproduceBug() {
             } catch (error) {
                 if (!currentIssue.comments) currentIssue.comments = [];
                 currentIssue.comments.push({ author, message, timestamp: new Date().toISOString() });
+                // Clear the textarea
                 document.getElementById('new-comment').value = '';
+                // Refresh detail view to show new comment
                 openDetail(currentIssue.id);
             }
         }
@@ -1862,6 +4041,550 @@ function reproduceBug() {
         function filterBySprint(sprintId) {
             document.getElementById('filter-sprint').value = sprintId;
             updateUI();
+        }
+
+        // ============================================
+        // DETAIL TABS (Overview, History, All)
+        // ============================================
+        
+        function switchDetailTab(tabName) {
+            // Update active tab styling
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected tab content
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+        }
+        
+        function renderActivityLog() {
+            const activityLogContainer = document.getElementById('detail-activity-log');
+            const allTabActivityLog = document.getElementById('detail-activity-log-all');
+            
+            if (!currentIssue) return;
+            
+            const activities = currentIssue.activityLog || [];
+            
+            if (activities.length === 0) {
+                const noActivityHtml = '<p style="color:var(--text-muted);text-align:center;padding:20px;">No activity recorded yet</p>';
+                activityLogContainer.innerHTML = noActivityHtml;
+                if (allTabActivityLog) allTabActivityLog.innerHTML = noActivityHtml;
+                return;
+            }
+            
+            // Sort activities by timestamp (newest first)
+            const sortedActivities = [...activities].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+            
+            const activityHtml = sortedActivities.map(activity => {
+                const icon = getActivityIcon(activity.action);
+                const color = getActivityColor(activity.action);
+                return `
+                    <div class="activity-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px;border-bottom:1px solid var(--border-color);">
+                        <div class="activity-icon" style="width:32px;height:32px;border-radius:50%;background:${color}20;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:16px;">${icon}</span>
+                        </div>
+                        <div class="activity-content" style="flex:1;">
+                            <div class="activity-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                                <span class="activity-action" style="font-weight:500;color:${color};">${formatActionName(activity.action)}</span>
+                                <span class="activity-time" style="font-size:12px;color:var(--text-muted);">${formatDate(activity.timestamp)}</span>
+                            </div>
+                            <div class="activity-details" style="font-size:13px;color:var(--text-secondary);line-height:1.5;">
+                                ${activity.details || getDefaultActivityDescription(activity.action)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            activityLogContainer.innerHTML = activityHtml;
+            if (allTabActivityLog) allTabActivityLog.innerHTML = activityHtml;
+        }
+        
+        function renderAllTabContent() {
+            // Description
+            const descAll = document.getElementById('detail-description-all');
+            if (descAll && currentIssue) {
+                descAll.textContent = currentIssue.description || 'No description provided.';
+            }
+            
+            // Comments
+            const commentsAll = document.getElementById('detail-comments-all');
+            if (commentsAll && currentIssue) {
+                commentsAll.innerHTML = (currentIssue.comments || []).map(c => `
+                    <div class="comment ${getCommentClass(c.author)}" style="margin-bottom:12px;">
+                        <div class="comment-avatar">${getCommentAvatar(c.author)}</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">${getCommentBadge(c.author)}</span>
+                                <span class="comment-time">${formatDate(c.timestamp)}</span>
+                            </div>
+                            <div class="comment-text">${escapeHtml(c.message)}</div>
+                        </div>
+                    </div>
+                `).join('') || '<p style="color:var(--text-muted)">No comments yet</p>';
+            }
+        }
+        
+        function getActivityIcon(action) {
+            const icons = {
+                'created': '🆕',
+                'updated': '✏️',
+                'status_changed': '🔄',
+                'assigned': '👤',
+                'comment_added': '💬',
+                'review_requested': '👁️',
+                'approved': '✅',
+                'rejected': '❌',
+                'qa_pass': '✅',
+                'qa_fail': '🔴',
+                'documentation_complete': '📝',
+                'closed': '🏁',
+                'reopened': '🔓',
+                'deleted': '🗑️'
+            };
+            return icons[action] || '📋';
+        }
+        
+        function getActivityColor(action) {
+            const colors = {
+                'created': 'var(--accent-cyan)',
+                'updated': 'var(--accent-purple)',
+                'status_changed': '#FFA726',
+                'assigned': '#66BB6A',
+                'comment_added': '#42A5F5',
+                'review_requested': '#AB47BC',
+                'approved': '#66BB6A',
+                'rejected': '#EF5350',
+                'qa_pass': '#66BB6A',
+                'qa_fail': '#EF5350',
+                'documentation_complete': '#FFD700',
+                'closed': '#78909C',
+                'reopened': '#FFA726',
+                'deleted': '#EF5350'
+            };
+            return colors[action] || 'var(--text-secondary)';
+        }
+        
+        function formatActionName(action) {
+            return action.split('_').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+        
+        function getDefaultActivityDescription(action) {
+            const descriptions = {
+                'created': 'Issue was created',
+                'updated': 'Issue details were updated',
+                'status_changed': 'Status was changed',
+                'assigned': 'Issue was assigned to an agent',
+                'comment_added': 'A comment was added',
+                'review_requested': 'Review was requested',
+                'approved': 'Feature was approved',
+                'rejected': 'Feature was rejected',
+                'qa_pass': 'QA review passed',
+                'qa_fail': 'QA review failed',
+                'documentation_complete': 'Documentation was completed',
+                'closed': 'Issue was closed',
+                'reopened': 'Issue was reopened',
+                'deleted': 'Issue was deleted'
+            };
+            return descriptions[action] || 'Activity recorded';
+        }
+
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+
+        const SHORTCUTS = [
+            { keys: ['Ctrl/Cmd', 'K'], description: 'Quick open/search issues' },
+            { keys: ['Ctrl/Cmd', 'N'], description: 'Create new issue' },
+            { keys: ['Ctrl/Cmd', 'E'], description: 'Toggle Explorer sidebar' },
+            { keys: ['Ctrl/Cmd', 'B'], description: 'Toggle Activity bar' },
+            { keys: ['Ctrl/Cmd', '1'], description: 'Switch to Issues view' },
+            { keys: ['Ctrl/Cmd', '2'], description: 'Switch to Sprints view' },
+            { keys: ['Ctrl/Cmd', '3'], description: 'Switch to Board view' },
+            { keys: ['Escape'], description: 'Close modals/detail view' },
+            { keys: ['Enter'], description: 'Open selected issue' },
+            { keys: ['↑/↓'], description: 'Navigate issue list' },
+            { keys: ['?'], description: 'Show keyboard shortcuts help' }
+        ];
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', handleKeyboardShortcut);
+            
+            // Setup search modal input
+            const searchInput = document.getElementById('search-modal-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', handleSearchInput);
+                searchInput.addEventListener('keydown', handleSearchNavigation);
+            }
+        }
+
+        function handleKeyboardShortcut(e) {
+            // Don't trigger shortcuts when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                if (e.key === 'Escape') {
+                    // Allow Escape to close modals even from inputs
+                    if (isAnyModalOpen()) {
+                        e.preventDefault();
+                        closeAllModals();
+                        e.target.blur();
+                    }
+                }
+                return;
+            }
+
+            // Handle Ctrl/Cmd shortcuts
+            if (e.metaKey || e.ctrlKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'k':
+                        e.preventDefault();
+                        openSearchModal();
+                        return;
+                    case 'n':
+                        e.preventDefault();
+                        openIssueModal();
+                        return;
+                    case 'e':
+                        e.preventDefault();
+                        toggleExplorer();
+                        return;
+                    case 'b':
+                        e.preventDefault();
+                        toggleActivityBar();
+                        return;
+                    case '1':
+                        e.preventDefault();
+                        switchToView('issues');
+                        return;
+                    case '2':
+                        e.preventDefault();
+                        switchToView('sprints');
+                        return;
+                    case '3':
+                        e.preventDefault();
+                        switchToView('board');
+                        return;
+                }
+            }
+
+            // Handle other shortcuts
+            switch(e.key) {
+                case 'Escape':
+                    if (isAnyModalOpen()) {
+                        e.preventDefault();
+                        closeAllModals();
+                    }
+                    break;
+                case 'Enter':
+                    if (keyboardNavState.enabled && keyboardNavState.filteredIssues.length > 0) {
+                        e.preventDefault();
+                        const issue = keyboardNavState.filteredIssues[keyboardNavState.selectedIndex];
+                        if (issue) {
+                            openDetail(issue.id);
+                            disableKeyboardNav();
+                        }
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (keyboardNavState.enabled) {
+                        e.preventDefault();
+                        navigateKeyboardSelection(-1);
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (keyboardNavState.enabled) {
+                        e.preventDefault();
+                        navigateKeyboardSelection(1);
+                    }
+                    break;
+                case '?':
+                    e.preventDefault();
+                    openShortcutsModal();
+                    break;
+            }
+        }
+
+        function openSearchModal() {
+            const modal = document.getElementById('search-modal');
+            const input = document.getElementById('search-modal-input');
+            modal.classList.remove('hidden');
+            input.value = '';
+            input.focus();
+            updateSearchResults('');
+        }
+
+        function closeSearchModal() {
+            document.getElementById('search-modal').classList.add('hidden');
+        }
+
+        function handleSearchInput(e) {
+            updateSearchResults(e.target.value);
+        }
+
+        function updateSearchResults(query) {
+            const resultsContainer = document.getElementById('search-results');
+            const searchTerm = query.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                keyboardNavState.filteredIssues = issues.slice(0, 10);
+            } else {
+                keyboardNavState.filteredIssues = issues.filter(issue => 
+                    issue.title.toLowerCase().includes(searchTerm) ||
+                    issue.id.toLowerCase().includes(searchTerm) ||
+                    (issue.description && issue.description.toLowerCase().includes(searchTerm))
+                ).slice(0, 20);
+            }
+            
+            keyboardNavState.selectedIndex = 0;
+            keyboardNavState.enabled = keyboardNavState.filteredIssues.length > 0;
+            
+            if (keyboardNavState.filteredIssues.length === 0) {
+                resultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No issues found</div>';
+                return;
+            }
+            
+            resultsContainer.innerHTML = keyboardNavState.filteredIssues.map((issue, index) => {
+                const categoryClass = issue.category.toLowerCase();
+                return `
+                    <div class="search-result-item ${index === 0 ? 'selected' : ''}" data-index="${index}" onclick="openDetail('${issue.id}'); closeSearchModal();">
+                        <span class="result-id">${issue.id}</span>
+                        <span class="result-title">${escapeHtml(issue.title)}</span>
+                        <span class="result-category ${categoryClass}">${issue.category}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleSearchNavigation(e) {
+            const items = document.querySelectorAll('.search-result-item');
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    keyboardNavState.selectedIndex = Math.min(keyboardNavState.selectedIndex + 1, items.length - 1);
+                    updateSearchSelection(items);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    keyboardNavState.selectedIndex = Math.max(keyboardNavState.selectedIndex - 1, 0);
+                    updateSearchSelection(items);
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (keyboardNavState.filteredIssues[keyboardNavState.selectedIndex]) {
+                        openDetail(keyboardNavState.filteredIssues[keyboardNavState.selectedIndex].id);
+                        closeSearchModal();
+                    }
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    closeSearchModal();
+                    break;
+            }
+        }
+
+        function updateSearchSelection(items) {
+            items.forEach((item, index) => {
+                item.classList.toggle('selected', index === keyboardNavState.selectedIndex);
+            });
+            const selected = items[keyboardNavState.selectedIndex];
+            if (selected) {
+                selected.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function toggleExplorer() {
+            const sidebar = document.getElementById('sidebar');
+            const isVisible = sidebar.style.display !== 'none';
+            sidebar.style.display = isVisible ? 'none' : 'flex';
+            localStorage.setItem('explorerVisible', !isVisible);
+        }
+
+        function toggleActivityBar() {
+            const activityBar = document.querySelector('.activity-bar');
+            const isVisible = activityBar.style.display !== 'none';
+            activityBar.style.display = isVisible ? 'none' : 'flex';
+            localStorage.setItem('activityBarVisible', !isVisible);
+        }
+
+        function switchToView(view) {
+            currentView = view;
+            
+            // Update activity icons
+            document.querySelectorAll('.activity-icon').forEach((el, index) => {
+                el.classList.remove('active');
+                // Map view to activity icon index
+                const viewMap = { 'issues': 0, 'sprints': 1, 'board': 2, 'dashboard': 3 };
+                if (index === viewMap[view]) {
+                    el.classList.add('active');
+                }
+            });
+            
+            // Show/hide appropriate content
+            document.getElementById('kanban-view').style.display = view === 'board' || view === 'issues' ? 'block' : 'none';
+            document.getElementById('list-view').style.display = view === 'list' ? 'block' : 'none';
+            document.getElementById('sprints-view-content').style.display = view === 'sprints' ? 'block' : 'none';
+            
+            // Show sidebar for all views except dashboard
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.display = view === 'dashboard' ? 'none' : 'flex';
+            
+            updateUI();
+        }
+
+        function openShortcutsModal() {
+            document.getElementById('shortcuts-modal').classList.remove('hidden');
+        }
+
+        function closeShortcutsModal() {
+            document.getElementById('shortcuts-modal').classList.add('hidden');
+        }
+
+        function populateShortcutsModal() {
+            const grid = document.getElementById('shortcuts-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = SHORTCUTS.map(shortcut => `
+                <div class="shortcut-row">
+                    <span>${shortcut.description}</span>
+                    <div class="shortcut-keys">
+                        ${shortcut.keys.map(key => `<span class="kbd">${key}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function isAnyModalOpen() {
+            return !document.getElementById('issue-modal').classList.contains('hidden') ||
+                   !document.getElementById('detail-modal').classList.contains('hidden') ||
+                   !document.getElementById('sprint-modal').classList.contains('hidden') ||
+                   !document.getElementById('search-modal').classList.contains('hidden') ||
+                   !document.getElementById('shortcuts-modal').classList.contains('hidden');
+        }
+
+        function closeAllModals() {
+            closeIssueModal();
+            closeDetailModal();
+            closeSprintModal();
+            closeSearchModal();
+            closeShortcutsModal();
+            closeFeatureActionModal();
+            closeArchitectModal();
+            closeQAModal();
+            closeWriterModal();
+            disableKeyboardNav();
+        }
+
+        function disableKeyboardNav() {
+            keyboardNavState.enabled = false;
+            document.querySelectorAll('.tree-item.keyboard-selected').forEach(el => {
+                el.classList.remove('keyboard-selected');
+            });
+        }
+
+        function navigateKeyboardSelection(direction) {
+            const items = document.querySelectorAll('.tree-item');
+            if (items.length === 0) return;
+            
+            keyboardNavState.selectedIndex = Math.max(0, Math.min(
+                keyboardNavState.selectedIndex + direction,
+                items.length - 1
+            ));
+            
+            items.forEach((item, index) => {
+                item.classList.toggle('keyboard-selected', index === keyboardNavState.selectedIndex);
+            });
+            
+            const selected = items[keyboardNavState.selectedIndex];
+            if (selected) {
+                selected.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        // ============================================
+        // RESIZABLE SIDEBAR
+        // ============================================
+
+        function setupResizableSidebar() {
+            const resizer = document.getElementById('explorer-resizer');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (!resizer || !sidebar) return;
+            
+            let isResizing = false;
+            let startX = 0;
+            let startWidth = 0;
+            
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startX = e.clientX;
+                startWidth = sidebar.offsetWidth;
+                resizer.classList.add('resizing');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                
+                const width = startWidth + (e.clientX - startX);
+                const clampedWidth = Math.max(200, Math.min(500, width));
+                
+                sidebar.style.width = `${clampedWidth}px`;
+                sidebar.style.minWidth = `${clampedWidth}px`;
+                sidebar.style.maxWidth = `${clampedWidth}px`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    resizer.classList.remove('resizing');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                    
+                    // Persist width
+                    const width = sidebar.offsetWidth;
+                    localStorage.setItem('explorerWidth', width);
+                }
+            });
+        }
+
+        function loadSidebarWidth() {
+            const savedWidth = localStorage.getItem('explorerWidth');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (savedWidth && sidebar) {
+                const width = parseInt(savedWidth, 10);
+                if (width >= 200 && width <= 500) {
+                    sidebar.style.width = `${width}px`;
+                    sidebar.style.minWidth = `${width}px`;
+                    sidebar.style.maxWidth = `${width}px`;
+                }
+            }
+            
+            // Load visibility states
+            const explorerVisible = localStorage.getItem('explorerVisible');
+            if (explorerVisible === 'false') {
+                sidebar.style.display = 'none';
+            }
+            
+            const activityBarVisible = localStorage.getItem('activityBarVisible');
+            const activityBar = document.querySelector('.activity-bar');
+            if (activityBarVisible === 'false' && activityBar) {
+                activityBar.style.display = 'none';
+            }
         }
     </script>
 </body>
